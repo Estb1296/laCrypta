@@ -2,35 +2,46 @@ package model;
 
 import java.util.ArrayList;
 
-public class Sandwich implements MenuItem {
-    private final String name;
-    private double price;
-    private final String description;
+public class Sandwich extends BaseMenuItem {
     private String bread;
-    private String size;
+    private SandwichSize size;
     private String meat;
     private String cheese;
-    private final ArrayList<String> toppings;
+    private final ArrayList<Topping> topping;
 
-    public Sandwich() {
-        this.name = "Custom Sandwich";
-        this.price = 8.99;  // Base price
-        this.description = getDescription();
-        this.toppings = new ArrayList<>();
+    private double sizePriceModifier = 0.0; // Tracks the base price of the size selection
+    private double toppingsPriceModifier = 0.0; // Tracks extra costs for additions
+
+    public Sandwich(String name, double price) {
+        super(name, price); // Passes the initial values straight up to BaseMenuItem
+        this.topping = new ArrayList<>();
     }
     public void setBread(String bread) {
         this.bread = bread;
     }
+    public enum SandwichSize {
+        FOUR("4\"", 6.99),
+        EIGHT("8\"", 8.99),
+        TWELVE("12\"", 10.99);
 
-    public void setSize(String size) {
-        this.size = size;
-        // Adjust price based on size
-        switch (size) {
-            case "Large" -> this.price = 10.99;
-            case "Medium" -> this.price = 8.99;
-            case "Small" -> this.price = 6.99;
+        private final String display;
+        private final double price;
+
+        SandwichSize(String display, double price) {
+            this.display = display;
+            this.price = price;
         }
+
+        public String getDisplay() { return display; }
+        public double getPrice() { return price; }
     }
+
+
+    public void setSize(SandwichSize size) {
+        this.size = size;
+        this.sizePriceModifier = size.getPrice();
+    }
+
     public void setMeat(String meat) {
         this.meat = meat;
     }
@@ -38,24 +49,50 @@ public class Sandwich implements MenuItem {
         this.cheese = cheese;
     }
 
-    public void addTopping(String topping) {
-        toppings.add(topping);
-        this.price += 0.50;  // Each topping costs extra
+    public void addTopping(Topping topping) {
+        this.topping.add(topping);
+        this.toppingsPriceModifier += topping.getPrice();
     }
     // public methods return private fields to the user without giving access
     @Override
     public String getName() {
-        return name;
+        if (size != null && bread != null) {
+            return size + " " + bread + " Sandwich";
+        }
+        return super.getName(); // Falls back to "Sandwich" if building hasn't started yet
     }
-
     @Override
     public double getPrice() {
-        return price;
+        return this.sizePriceModifier + this.toppingsPriceModifier;
     }
-
     @Override
     public String getDescription() {
-        return "Size" +size+"Bread: " + bread + ", Meat: " + meat +
-                ", Cheese: " + cheese + ", Toppings: " + toppings;
+        StringBuilder sb = new StringBuilder();
+        sb.append("Sandwich Specifications:\n");
+        sb.append("  • Size: ").append(size != null ? size.getDisplay() : "Not Selected").append("\n");
+        sb.append("  • Bread: ").append(bread != null ? bread : "Not Selected").append("\n");
+        sb.append("  • Meat: ").append(meat != null ? meat : "None").append("\n");
+        sb.append("  • Cheese: ").append(cheese != null ? cheese : "None").append("\n");
+
+        // Separate regular and premium
+        ArrayList<String> regularNames = new ArrayList<>();
+        ArrayList<String> premiumNames = new ArrayList<>();
+
+        for (Topping toppings : topping) {
+            if (toppings.isPremium()) {
+                premiumNames.add(toppings.getName() + " (+$" + String.format("%.2f", toppings.getPrice()) + ")");
+            } else {
+                regularNames.add(toppings.getName());
+            }
+        }
+
+        sb.append("  • Regular Toppings: ")
+                .append(regularNames.isEmpty() ? "None" : String.join(", ", regularNames))
+                .append("\n");
+        sb.append("  • Premium Toppings: ")
+                .append(premiumNames.isEmpty() ? "None" : String.join(", ", premiumNames))
+                .append("\n");
+
+        return sb.toString().trim();
     }
 }

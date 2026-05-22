@@ -1,13 +1,14 @@
 package ui;
-import model.Order;
-import model.Sandwich;
-import java.util.ArrayList;
-import model.MenuItem;
+import model.*;
+
+
 
 import java.util.Scanner;
 
 public class UserInterface {
     static Scanner input = new Scanner(System.in);
+    String name;
+    double price;
     private final Order currentOrder = new Order();
     public void display(){
         boolean isRunning = true;
@@ -50,7 +51,7 @@ public class UserInterface {
 
     // Sandwich customization screen
     private void sandwichScreen() {
-        Sandwich sandwich = new Sandwich();
+        Sandwich sandwich = new Sandwich(name,price);
         boolean isSandwichScreen = true;
         while (isSandwichScreen) {
             System.out.println("""
@@ -96,27 +97,26 @@ public class UserInterface {
         boolean isSelectingSize = true;
         while (isSelectingSize) {
             System.out.println("""
-        Select sandwich size:
-        A) Small - $6.99
-        B) Medium - $8.99
-        C) Large - $10.99
-        0) Back""");
-
+    Select sandwich size:
+    A) 4" - $6.99
+    B) 8" - $8.99
+    C) 12" - $10.99
+    0) Back""");
             String choice = input.nextLine();
             switch(choice) {
                 case "A","a":
-                    sandwich.setSize("Small");
-                    System.out.println("Selected Small");
+                    sandwich.setSize(Sandwich.SandwichSize.FOUR);
+                    System.out.println("Selected " + Sandwich.SandwichSize.FOUR.getDisplay());
                     isSelectingSize = false;
                     break;
                 case "B","b":
-                    sandwich.setSize("Medium");
-                    System.out.println("Selected Medium");
+                    sandwich.setSize(Sandwich.SandwichSize.EIGHT);
+                    System.out.println("Selected " + Sandwich.SandwichSize.EIGHT.getDisplay());
                     isSelectingSize = false;
                     break;
                 case "C","c":
-                    sandwich.setSize("Large");
-                    System.out.println("Selected Large");
+                    sandwich.setSize(Sandwich.SandwichSize.TWELVE);
+                    System.out.println("Selected " + Sandwich.SandwichSize.TWELVE.getDisplay());
                     isSelectingSize = false;
                     break;
                 case "0":
@@ -126,8 +126,7 @@ public class UserInterface {
                     System.out.println("Invalid choice");
             }
         }
-    }
-
+        }
     private void meatScreen(Sandwich sandwich) {
         boolean isSelectingMeat = true;
         while (isSelectingMeat) {
@@ -175,7 +174,7 @@ public class UserInterface {
             }
         }
     }
-
+    //Cheese selection screen
     private void cheeseScreen(Sandwich sandwich) {
         boolean isSelectingCheese = true;
         while (isSelectingCheese) {
@@ -229,45 +228,53 @@ public class UserInterface {
             }
         }
     }
-
+    //Topping selection here
     private void toppingsScreen(Sandwich sandwich) {
         boolean isSelectingToppings = true;
         while (isSelectingToppings) {
             System.out.println("""
-        Select toppings (select multiple or 0 to finish):
-        A) Lettuce
-        B) Tomato
-        C) Onion
-        D) Pickles
-        E) Jalapeños
-        F) Bacon
-        0) Done with toppings""");
+    Select toppings (select multiple or 0 to finish):
+    Regular Toppings ($0.50 each):
+    A) Lettuce
+    B) Tomato
+    C) Onion
+    D) Pickles
+    E) Jalapeños
+    
+    Premium Toppings:
+    F) Bacon (+$1.50)
+    G) Cheese (+$1.00)
+    0) Done with toppings""");
 
             String choice = input.nextLine();
             switch(choice) {
                 case "A","a":
-                    sandwich.addTopping("Lettuce");
+                    sandwich.addTopping(new Topping("Lettuce", 0.50, false));
                     System.out.println("Added Lettuce (+$0.50)");
                     break;
                 case "B","b":
-                    sandwich.addTopping("Tomato");
+                    sandwich.addTopping(new Topping("Tomato", 0.50, false));
                     System.out.println("Added Tomato (+$0.50)");
                     break;
                 case "C","c":
-                    sandwich.addTopping("Onion");
+                    sandwich.addTopping(new Topping("Onion", 0.50, false));
                     System.out.println("Added Onion (+$0.50)");
                     break;
                 case "D","d":
-                    sandwich.addTopping("Pickles");
+                    sandwich.addTopping(new Topping("Pickles", 0.50, false));
                     System.out.println("Added Pickles (+$0.50)");
                     break;
                 case "E","e":
-                    sandwich.addTopping("Jalapeños");
+                    sandwich.addTopping(new Topping("Jalapeños", 0.50, false));
                     System.out.println("Added Jalapeños (+$0.50)");
                     break;
                 case "F","f":
-                    sandwich.addTopping("Bacon");
-                    System.out.println("Added Bacon (+$0.50)");
+                    sandwich.addTopping(new Topping("Bacon", 1.50, true));
+                    System.out.println("Added Bacon (+$1.50)");
+                    break;
+                case "G","g":
+                    sandwich.addTopping(new Topping("Cheese", 1.00, true));
+                    System.out.println("Added Cheese (+$1.00)");
                     break;
                 case "0":
                     isSelectingToppings = false;
@@ -282,39 +289,60 @@ public class UserInterface {
         boolean isDrinkScreen = true;
         while(isDrinkScreen){
             System.out.println("""
-            What kind of drink do you want?
-            A) Coca-Cola
-            B) Sprite
-            C) Orange Fanta
-            D) Iced Tea
-            E) Lemonade
-            F) Bottled Water
-            G) Coffee
-            H) Back to Order Screen""");
+        What kind of drink do you want?
+        A) Coca-Cola
+        B) Sprite
+        C) Orange Fanta
+        D) Iced Tea
+        E) Lemonade
+        F) Bottled Water
+        G) Coffee
+        H) Back to Order Screen""");
 
             String choice = input.nextLine();
-
+            Drink drink;
             switch(choice) {
                 case "A","a":
-                    System.out.println("Added Coca-Cola");
+                    drink = new Drink("Coca-Cola");
+                    drinkSizeScreen(drink);
+                    currentOrder.addItem(drink);
+                    System.out.println("Added " + drink.getName() + " to cart!");
                     break;
                 case "B","b":
-                    System.out.println("Added Sprite");
+                    drink = new Drink("Sprite");
+                    drinkSizeScreen(drink);
+                    currentOrder.addItem(drink);
+                    System.out.println("Added " + drink.getName() + " to cart!");
                     break;
                 case "C","c":
-                    System.out.println("Added Orange Fanta");
+                    drink = new Drink("Orange Fanta");
+                    drinkSizeScreen(drink);
+                    currentOrder.addItem(drink);
+                    System.out.println("Added " + drink.getName() + " to cart!");
                     break;
                 case "D","d":
-                    System.out.println("Added Iced Tea");
+                    drink = new Drink("Iced Tea");
+                    drinkSizeScreen(drink);
+                    currentOrder.addItem(drink);
+                    System.out.println("Added " + drink.getName() + " to cart!");
                     break;
                 case "E","e":
-                    System.out.println("Added Lemonade");
+                    drink = new Drink("Lemonade");
+                    drinkSizeScreen(drink);
+                    currentOrder.addItem(drink);
+                    System.out.println("Added " + drink.getName() + " to cart!");
                     break;
                 case "F","f":
-                    System.out.println("Added Bottled Water");
+                    drink = new Drink("Bottled Water");
+                    drinkSizeScreen(drink);
+                    currentOrder.addItem(drink);
+                    System.out.println("Added " + drink.getName() + " to cart!");
                     break;
                 case "G","g":
-                    System.out.println("Added Coffee");
+                    drink = new Drink("Coffee");
+                    drinkSizeScreen(drink);
+                    currentOrder.addItem(drink);
+                    System.out.println("Added " + drink.getName() + " to cart!");
                     break;
                 case "H","h":
                     isDrinkScreen = false;
@@ -324,7 +352,29 @@ public class UserInterface {
             }
         }
     }
+    private void drinkSizeScreen(Drink drink) {
+        System.out.println("""
+    Select drink size:
+    A) Small - $1.99
+    B) Medium - $2.50
+    C) Large - $3.00""");
 
+        String choice = input.nextLine();
+        switch(choice) {
+            case "A","a":
+                drink.setSize("Small");
+                System.out.println("Selected " + drink.getSize());
+                break;
+            case "B","b":
+                drink.setSize("Medium");
+                System.out.println("Selected " + drink.getSize());
+                break;
+            case "C","c":
+                drink.setSize("Large");
+                System.out.println("Selected " + drink.getSize());
+                break;
+        }
+    }
     // Chips selection screen
     private void chipsScreen(){
         boolean isChipsScreen = true;
@@ -340,24 +390,27 @@ public class UserInterface {
             G) Back to Order Screen""");
 
             String choice = input.nextLine();
+            Chips chips=null;
             switch(choice) {
                 case "A","a":
-                    System.out.println("Added Lay's Classic");
+                    chips = new Chips("Lay's Classic");
                     break;
                 case "B","b":
-                    System.out.println("Added Doritos Nacho Cheese");
+                    chips = new Chips("Doritos Nacho Cheese");
                     break;
                 case "C","c":
-                    System.out.println("Added Cheetos Flamin' Hot");
+                    chips = new Chips("Cheetos Flamin' Hot");
                     break;
                 case "D","d":
-                    System.out.println("Added Fritos Original");
+                    System.out.println("Fritos Original");
+                    chips = new Chips("Added Fritos Original");
                     break;
                 case "E","e":
-                    System.out.println("Added Pringles Sour Cream & Onion");
+                    chips = new Chips("Pringles Sour Cream & Onion");
                     break;
                 case "F","f":
                     System.out.println("Added Kettle Cooked");
+                    chips =new Chips("Kettle Cooked");
                     break;
                 case "G","g":
                     isChipsScreen = false;
@@ -365,24 +418,28 @@ public class UserInterface {
                 default:
                     System.out.println("Invalid choice");
             }
+            if (chips != null) {
+                currentOrder.addItem(chips); // Replace 'currentOrder' with your actual Order tracking variable name
+                System.out.println("Added " + chips.getName() + " to cart!");
+                isChipsScreen = false; // Optional: Kick back to order screen after adding an item
+            }
         }
     }
     private void displayCart() {
         boolean inCart = true;
         while (inCart) {
-            System.out.println("\n========== YOUR CART ==========");
+            System.out.println("========== YOUR CART ==========");
+            int index = 1;
+            for (MenuItem item : currentOrder.getItems()) {
+                // 1. Print standard item line item detail
+                System.out.println(index + ") " + item.getName() + " - $" + String.format("%.2f", item.getPrice()));
 
-            ArrayList<MenuItem> items = currentOrder.getItems();
-            if (items.isEmpty()) {
-                System.out.println("Cart is empty");
-            } else {
-                for (int i = 0; i < items.size(); i++) {
-                    MenuItem item = items.get(i);
-                    System.out.println((i + 1) + ") " + item.getName() + " - $" + item.getPrice());
-                }
-                System.out.println("==============================");
-                System.out.println("Total: $" + currentOrder.getTotal());
+                // 2. Call the description method to print all underlying customization details below it
+                System.out.println(item.getDescription());
+                System.out.println("------------------------------");
+                index++;
             }
+            System.out.println("Total: $" + String.format("%.2f", currentOrder.calculateTotal()));
 
             System.out.println("\n1) Continue Shopping");
             System.out.println("2) Remove Item");
@@ -414,9 +471,8 @@ public class UserInterface {
     }
 
     private void completeCheckout() {
-        double total = currentOrder.getTotal();
-        System.out.println("\n========== CHECKOUT ==========");
-        System.out.println("Total Amount: $" + total);
+        double total = currentOrder.calculateTotal();
+        System.out.println("Total Amount: $" + String.format("%.2f", total));
         System.out.println("Thank you for your order!");
         currentOrder.clearCart();
     }

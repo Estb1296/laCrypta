@@ -35,4 +35,12 @@ public class Order {
         items.clear();
         total = 0.0;
     }
+    public double calculateTotal() {
+        double grandTotal = 0.0;
+        for (MenuItem item : items) {
+            // Polymorphically checks the specific subclass calculation on the fly
+            grandTotal += item.getPrice();
+        }
+        return grandTotal;
+    }
 }
