@@ -109,7 +109,7 @@ public class Sandwich extends MenuItem {
     @Override
     public String getName() {
         if (size != null && bread != null) {
-            return size.getDisplay() + " " + bread + " Sandwich";
+            return size.getDisplay() + " " + bread + " Sandwich" + (isToasted() ? " (Toasted)" : "");
         }
         return "Custom Sandwich";
     }
@@ -126,7 +126,7 @@ public class Sandwich extends MenuItem {
         sb.append("  • Bread: ").append(bread != null ? bread : "Not Selected").append("\n");
         sb.append("  • Meat: ").append(meat != null ? meat : "None").append("\n");
         sb.append("  • Cheese: ").append(cheese != null ? cheese : "None").append("\n");
-        sb.append("  • Toasted: ").append(isToasted ? "Yes" : "No").append("\n");
+        sb.append("  • Toasted: ").append(isToasted() ? "Yes" : "No").append("\n");
 
         // Separate regular and premium
         ArrayList<String> regularNames = new ArrayList<>();
@@ -155,7 +155,8 @@ public class Sandwich extends MenuItem {
 
     @Override
     public String toReceiptLine() {
-        return getName() + " - $" + String.format("%.2f", getPrice());
+        String toastStatus = isToasted() ? " - TOASTED" : "";
+        return getName() + toastStatus + " - $" + String.format("%.2f", getPrice());
     }
     @Override
     public String getCategory() {

@@ -58,6 +58,7 @@ public class UserInterface {
         Sandwich sandwich = new Sandwich();
         boolean isSandwichScreen = true;
         while (isSandwichScreen) {
+            displaySandwichSummary(sandwich);
             System.out.println("""
         1) Select your bread
         2) Select sandwich size
@@ -87,6 +88,16 @@ public class UserInterface {
                 case 8-> toastScreen(sandwich);
                 case 9-> saucesScreen(sandwich);
                 case 10->extraMeatCheeseScreen(sandwich);
+                case 11 -> {
+                    displaySandwichSummary(sandwich);  // Final review before adding
+                    System.out.println("\nAdd this sandwich to cart? (Y/N)");
+                    String confirm = input.nextLine().toUpperCase();
+                    if (confirm.equals("Y")) {
+                        currentOrder.addItem(sandwich);
+                        System.out.println("Sandwich added to cart!");
+                        isSandwichScreen = false;
+                    }
+                }
                 case 0 -> isSandwichScreen = false;
                 default -> System.out.println("Invalid input.");
             }
@@ -137,6 +148,7 @@ public class UserInterface {
                 default:
                     System.out.println("Invalid choice");
             }
+            displaySandwichSummary(sandwich);
         }
         }
     private void meatScreen(Sandwich sandwich) {
@@ -450,12 +462,14 @@ public class UserInterface {
                             getSizeForExtra(sandwich));
                     sandwich.addExtraTopping(extraMeat);
                     System.out.println("Added Extra Meat (+$" + String.format("%.2f", extraMeat.getPrice()) + ")");
+                    displaySandwichSummary(sandwich);
                     break;
                 case "B":
                     ExtraTopping extraCheese = new ExtraTopping("Extra Cheese",
                             getSizeForExtra(sandwich));
                     sandwich.addExtraTopping(extraCheese);
                     System.out.println("Added Extra Cheese (+$" + String.format("%.2f", extraCheese.getPrice()) + ")");
+                    displaySandwichSummary(sandwich);
                     break;
                 case "C":
                     removeExtraToppingScreen(sandwich);
@@ -521,6 +535,13 @@ public class UserInterface {
                 System.out.println("Invalid choice");
             }
         }
+    }
+    private void displaySandwichSummary(Sandwich sandwich) {
+        System.out.println("\n========== SANDWICH SUMMARY ==========");
+        System.out.println("  Size: " + (sandwich.getSize() != null ? sandwich.getSize().getDisplay() : "Not Selected"));
+        System.out.println("  Toasted: " + (sandwich.isToasted() ? "Yes" : "No"));
+        System.out.println("  Price: $" + String.format("%.2f", sandwich.getPrice()));
+        System.out.println("=====================================\n");
     }
     // Drink selection screen
     private void drinkScreen(){
