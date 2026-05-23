@@ -2,11 +2,13 @@ package model;
 
 import java.util.ArrayList;
 
-public class Order {
+public class Order extends MenuItem implements Priceable{
     private final ArrayList<MenuItem> items;
+
     private double total;
 
     public Order() {
+        super("Order", 0, "Customer Order");
         items = new ArrayList<>();
         total = 0.0;
     }
@@ -15,15 +17,13 @@ public class Order {
         items.add(item);
         total += item.getPrice();
     }
-
     public ArrayList<MenuItem> getItems() {
         return items;
     }
-
-    public double getTotal() {
+    @Override
+    public double getPrice() {
         return total;
     }
-
     public void removeItem(int index) {
         if (index >= 0 && index < items.size()) {
             total -= items.get(index).getPrice();
@@ -35,12 +35,19 @@ public class Order {
         items.clear();
         total = 0.0;
     }
-    public double calculateTotal() {
-        double grandTotal = 0.0;
-        for (MenuItem item : items) {
-            // Polymorphically checks the specific subclass calculation on the fly
-            grandTotal += item.getPrice();
-        }
-        return grandTotal;
+    @Override
+    public double calculatePrice() {
+        return total;
     }
+    @Override
+    public String toReceiptLine() {
+        return "Order Total: $" + String.format("%.2f", total);
+    }
+
+    @Override
+    public String getCategory() {
+        return "Order";
+    }
+
+
 }

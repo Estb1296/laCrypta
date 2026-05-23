@@ -1,19 +1,26 @@
 package model;
 
-public class Chips extends BaseMenuItem{
-    private final String flavor;
-    public Chips(String flavor) {
-        super(flavor, 1.50); // Sends the flavor as the item name and 1.50 as the price up to BaseMenuItem
-        this.flavor = flavor;
+public class Chips extends MenuItem {
+    public Chips(String name, double price, String description) {
+        super(name, price, description);
     }
-    @Override
     public String getDescription() {
-        return "Chips: " + flavor + " ($" + String.format("%.2f", getPrice()) + ")";
+        return "Chips: " + getName() + " ($" + String.format("%.2f", getPrice()) + ")";
+    }
+
+    @Override
+    public String toReceiptLine() {
+        return "";
+    }
+
+    @Override
+    public String getCategory() {
+        return "";
     }
 
     @Override
     public double getPrice() {
-        return basePrice; // Asks the parent class for the price we sent up
+        return getPrice(); // Asks the parent class for the price we sent up
     }
 }
 

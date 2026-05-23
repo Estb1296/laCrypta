@@ -7,9 +7,12 @@ import java.util.Scanner;
 
 public class UserInterface {
     static Scanner input = new Scanner(System.in);
-    String name;
-    double price;
     private final Order currentOrder = new Order();
+    private final CheckOutScreen checkoutScreen;
+
+    public UserInterface() {
+        this.checkoutScreen = new CheckOutScreen(currentOrder, input);
+    }
     public void display(){
         boolean isRunning = true;
         while (isRunning) {
@@ -42,7 +45,7 @@ public class UserInterface {
                 case 1 -> sandwichScreen();      // Sandwich customization
                 case 2 -> drinkScreen();           // Drink selection
                 case 3 -> chipsScreen();           // Chips selection
-                case 4 -> displayCart();
+                case 4 -> checkoutScreen.display();  // Call checkout screen
                 case 0 -> isOrderScreen = false;
                 default -> System.out.println("Invalid input.");
             }
@@ -51,7 +54,7 @@ public class UserInterface {
 
     // Sandwich customization screen
     private void sandwichScreen() {
-        Sandwich sandwich = new Sandwich(name,price);
+        Sandwich sandwich = new Sandwich();
         boolean isSandwichScreen = true;
         while (isSandwichScreen) {
             System.out.println("""
@@ -393,24 +396,24 @@ public class UserInterface {
             Chips chips=null;
             switch(choice) {
                 case "A","a":
-                    chips = new Chips("Lay's Classic");
+                    chips = new Chips("Lay's Classic", 0, "");
                     break;
                 case "B","b":
-                    chips = new Chips("Doritos Nacho Cheese");
+                    chips = new Chips("Doritos Nacho Cheese", 0, "");
                     break;
                 case "C","c":
-                    chips = new Chips("Cheetos Flamin' Hot");
+                    chips = new Chips("Cheetos Flamin' Hot", 0, "");
                     break;
                 case "D","d":
                     System.out.println("Fritos Original");
-                    chips = new Chips("Added Fritos Original");
+                    chips = new Chips("Added Fritos Original", 0, "");
                     break;
                 case "E","e":
-                    chips = new Chips("Pringles Sour Cream & Onion");
+                    chips = new Chips("Pringles Sour Cream & Onion", 1.50, "Snack");
                     break;
                 case "F","f":
                     System.out.println("Added Kettle Cooked");
-                    chips =new Chips("Kettle Cooked");
+                    chips =new Chips("Kettle Cooked", 0, "");
                     break;
                 case "G","g":
                     isChipsScreen = false;
@@ -421,59 +424,8 @@ public class UserInterface {
             if (chips != null) {
                 currentOrder.addItem(chips); // Replace 'currentOrder' with your actual Order tracking variable name
                 System.out.println("Added " + chips.getName() + " to cart!");
-                isChipsScreen = false; // Optional: Kick back to order screen after adding an item
+                isChipsScreen = false; // Kick back to order screen after adding an item
             }
         }
     }
-    private void displayCart() {
-        boolean inCart = true;
-        while (inCart) {
-            System.out.println("========== YOUR CART ==========");
-            int index = 1;
-            for (MenuItem item : currentOrder.getItems()) {
-                // 1. Print standard item line item detail
-                System.out.println(index + ") " + item.getName() + " - $" + String.format("%.2f", item.getPrice()));
-
-                // 2. Call the description method to print all underlying customization details below it
-                System.out.println(item.getDescription());
-                System.out.println("------------------------------");
-                index++;
-            }
-            System.out.println("Total: $" + String.format("%.2f", currentOrder.calculateTotal()));
-
-            System.out.println("\n1) Continue Shopping");
-            System.out.println("2) Remove Item");
-            System.out.println("3) Checkout");
-            System.out.println("0) Cancel Order");
-
-            int choice = input.nextInt();
-            input.nextLine();
-
-            switch (choice) {
-                case 1 -> OrderScreen();
-                case 2 -> removeItemFromCart();
-                case 3 -> completeCheckout();
-                case 0 -> {
-                    currentOrder.clearCart();
-                    inCart = false;
-                }
-                default -> System.out.println("Invalid choice");
-            }
-        }
     }
-
-    private void removeItemFromCart() {
-        System.out.print("Enter item number to remove: ");
-        int index = input.nextInt() - 1;
-        input.nextLine();
-        currentOrder.removeItem(index);
-        System.out.println("Item removed");
-    }
-
-    private void completeCheckout() {
-        double total = currentOrder.calculateTotal();
-        System.out.println("Total Amount: $" + String.format("%.2f", total));
-        System.out.println("Thank you for your order!");
-        currentOrder.clearCart();
-    }
-}

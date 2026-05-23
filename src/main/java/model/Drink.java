@@ -1,31 +1,23 @@
 package model;
-public class Drink extends BaseMenuItem {
+public class Drink extends MenuItem {
         private String size; // Tracks "Small", "Medium", "Large"
-        private final String flavor; // Tracks "Coca-Cola", "Sprite", etc.
 
-        public Drink(String flavor) {
-            // We pass the flavor name up, and initialize the price to 0.0
-            // because the size selection screen will calculate the final cost.
-            super(flavor, 0.0);
-            this.flavor = flavor;
-        }
+    public Drink(String name) {
+        super(name, 2.50, "Beverage");
+    }
+    @Override
+    public String getDescription() {
+        return "Drink: " + getName() + " ($" + String.format("%.2f", getPrice()) + ")";
+    }
 
-        public void setSize(String size) {
+
+    public void setSize(String size) {
             this.size = size;
         }
 
         public String getSize() {
             return size;
         }
-
-        @Override
-        public String getName() {
-            if (size != null) {
-                return size + " " + flavor;
-            }
-            return flavor; // Fallback if size hasn't been set yet
-        }
-
         // Pulls pricing matrix out of variables and computes on demand
         @Override
         public double getPrice() {
@@ -40,10 +32,15 @@ public class Drink extends BaseMenuItem {
         }
 
         // Generates fresh description strings whenever checked out
-        @Override
-        public String getDescription() {
-            return "Drink: " + getName() + " ($" + String.format("%.2f", getPrice()) + ")";
-        }
 
+    @Override
+    public String toReceiptLine() {
+        return "";
+    }
+
+    @Override
+    public String getCategory() {
+        return "";
+    }
 
     }
