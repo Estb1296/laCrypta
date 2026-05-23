@@ -1,15 +1,20 @@
 package ui;
 
+import data.OrderRepository;
 import model.*;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class CheckOutScreen {
     private final Order currentOrder;
     private final Scanner input;
+    private final OrderRepository orderRepository;
 
-    public CheckOutScreen(Order currentOrder, Scanner input) {
+    public CheckOutScreen(Order currentOrder, OrderRepository orderRepository, Scanner input) {
         this.currentOrder = currentOrder;
+        this.orderRepository = orderRepository;
         this.input = input;
     }
 
@@ -18,7 +23,7 @@ public class CheckOutScreen {
         while (inCheckout) {
             displayOrderSummary();
 
-            System.out.println("\n1) Confirm Order");
+            System.out.println("1) Confirm Order");
             System.out.println("2) Continue Shopping");
             System.out.println("0) Cancel Order");
 
@@ -78,9 +83,23 @@ public class CheckOutScreen {
         System.out.println("Item removed");
     }
     private void completeCheckout() {
-        double total = currentOrder.getPrice();
+        double total = currentOrder.calculatePrice();
+        System.out.println("\n╔════════════════════════════════════╗");
+        System.out.println("║      ORDER CONFIRMATION            ║");
+        System.out.println("╚════════════════════════════════════╝");
         System.out.println("Total Amount: $" + String.format("%.2f", total));
-        System.out.println("Thank you for your order!");
+
+        try {
+            // Call repository to save receipt and store order
+            String receiptFilename = orderRepository.completeOrder(currentOrder);
+            System.out.println("✓ Receipt saved: " + receiptFilename);
+            System.out.println("Thank you for your order!");
+        } catch (IOException e) {
+            System.err.println("❌ Error saving receipt: " + e.getMessage());
+            System.out.println("Order completed but receipt could not be saved.");
+        }
+
+        // Clear cart for next order
         currentOrder.clearCart();
     }
 }

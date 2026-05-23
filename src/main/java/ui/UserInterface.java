@@ -1,4 +1,5 @@
 package ui;
+import data.OrderRepository;
 import model.*;
 
 
@@ -9,9 +10,11 @@ public class UserInterface {
     static Scanner input = new Scanner(System.in);
     private final Order currentOrder = new Order();
     private final CheckOutScreen checkoutScreen;
+    private final OrderRepository orderRepository;
 
     public UserInterface() {
-        this.checkoutScreen = new CheckOutScreen(currentOrder, input);
+        this.orderRepository = new OrderRepository();
+        this.checkoutScreen = new CheckOutScreen(currentOrder,orderRepository, input);
     }
     public void display(){
         boolean isRunning = true;
