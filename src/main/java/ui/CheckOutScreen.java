@@ -50,15 +50,25 @@ public class CheckOutScreen {
             return;
         }
 
-        for (int i = 0; i < items.size(); i++) {
-            MenuItem item = items.get(i);
-            System.out.println("\n" + (i + 1) + ") " + item.toReceiptLine());
-            System.out.println(item.getDescription());
-        }
+        displayItemsByCategory(items, "Sandwich");
+        displayItemsByCategory(items, "Drink");
+        displayItemsByCategory(items, "Chips");
 
         System.out.println("\n=====================================");
-        System.out.println("Total: $" + String.format("%.2f", currentOrder.getPrice()));
+        System.out.println("Total: $" + String.format("%.2f", currentOrder.calculatePrice()));
         System.out.println("=====================================");
+    }
+
+    private void displayItemsByCategory(ArrayList<MenuItem> items, String category) {
+        System.out.println("\n" + category.toUpperCase() + "S:");
+        int itemNumber = 1;
+        for (MenuItem item : items) {
+            if (item.getCategory().equals(category)) {
+                System.out.println(itemNumber + ") " + item.toReceiptLine());
+                System.out.println(item.getDescription());
+                itemNumber++;
+            }
+        }
     }
     private void removeItemFromCart() {
         System.out.print("Enter item number to remove: ");

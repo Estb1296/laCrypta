@@ -1,9 +1,9 @@
 package model;
 
 public abstract class MenuItem implements Priceable{
-   private String name;
+   private final String name;
    protected double price;
-    private String description;
+    private final String description;
         protected MenuItem(String name, double price, String description) {
             this.name = name;
             this.price = price;
