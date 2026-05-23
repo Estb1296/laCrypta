@@ -10,6 +10,7 @@ public class Sandwich extends MenuItem {
     private final ArrayList<Topping> toppings;
     private boolean isToasted = false;
     private final ArrayList<String> sauces = new ArrayList<>();
+    private final ArrayList<ExtraTopping> extraToppings = new ArrayList<>();
 
     public Sandwich() {
         super("Custom Sandwich", 0, "");
@@ -18,6 +19,15 @@ public class Sandwich extends MenuItem {
     public void setBread(String bread) {
         this.bread = bread;
     }
+
+    public ArrayList<String> getSauces() {
+        return sauces;
+    }
+
+    public ArrayList<ExtraTopping> getExtraTopping() {
+        return extraToppings;
+    }
+
     public enum SandwichSize {
         FOUR("4\"", 6.99),
         EIGHT("8\"", 8.99),
@@ -39,6 +49,9 @@ public class Sandwich extends MenuItem {
     public void setSize(SandwichSize size) {
         this.size = size;
         this.price = size.getPrice();  // Set base price
+    }
+    public SandwichSize getSize() {
+        return size;
     }
 
     public void setMeat(String meat) {
@@ -77,6 +90,17 @@ public class Sandwich extends MenuItem {
     }
     public void removeSauce(String sauce) {
         sauces.remove(sauce);
+    }
+    public void addExtraTopping(ExtraTopping extra) {
+        extraToppings.add(extra);
+        this.addToPrice(extra.getPrice());
+    }
+
+    public void removeExtraTopping(int index) {
+        if (index >= 0 && index < extraToppings.size()) {
+            this.subtractFromPrice(extraToppings.get(index).getPrice());
+            extraToppings.remove(index);
+        }
     }
     @Override
     public double calculatePrice() {

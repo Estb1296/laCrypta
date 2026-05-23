@@ -10,11 +10,9 @@ public class UserInterface {
     static Scanner input = new Scanner(System.in);
     private final Order currentOrder = new Order();
     private final CheckOutScreen checkoutScreen;
-    private final OrderRepository orderRepository;
-
     public UserInterface() {
-        this.orderRepository = new OrderRepository();
-        this.checkoutScreen = new CheckOutScreen(currentOrder,orderRepository, input);
+        OrderRepository orderRepository = new OrderRepository();
+        this.checkoutScreen = new CheckOutScreen(currentOrder, orderRepository, input);
     }
     public void display(){
         boolean isRunning = true;
@@ -69,7 +67,8 @@ public class UserInterface {
         6) Finish & Add to Cart
         7) Remove topping
         8) Toast Sandwich
-        9)
+        9) Sauces
+        10) Extra Toppings(Cheese,Meat)
         0) Back to Order Screen""");
             int choice = input.nextInt();
             input.nextLine();
@@ -87,6 +86,7 @@ public class UserInterface {
                 case 7-> removeToppingScreen(sandwich);
                 case 8-> toastScreen(sandwich);
                 case 9-> saucesScreen(sandwich);
+                case 10->extraMeatCheeseScreen(sandwich);
                 case 0 -> isSandwichScreen = false;
                 default -> System.out.println("Invalid input.");
             }
@@ -363,6 +363,7 @@ public class UserInterface {
         D) Ranch
         E) Thousand Islands
         F) Vinaigrette
+        G) Remove sauce
         0) Done with sauces""");
 
             String choice = input.nextLine().toUpperCase();
@@ -391,6 +392,9 @@ public class UserInterface {
                     sandwich.addSauce("Vinaigrette");
                     System.out.println("Added Vinaigrette");
                     break;
+                case "G":
+                    removeSaucesScreen(sandwich);
+                    break;
                 case "0":
                     isSelectingSauces = false;
                     break;
@@ -399,6 +403,125 @@ public class UserInterface {
             }
         }
         }
+    private void removeSaucesScreen(Sandwich sandwich) {
+        boolean isRemovingSauces = true;
+        while (isRemovingSauces) {
+            ArrayList<String> sauces = sandwich.getSauces();  // Need this getter
+
+            if (sauces.isEmpty()) {
+                System.out.println("No sauces to remove");
+                isRemovingSauces = false;
+            }
+            System.out.println("Remove Sauce:");
+            for (int i = 0; i < sauces.size(); i++) {
+                System.out.println((i + 1) + ") " + sauces.get(i));
+            }
+            System.out.println("0) Back");
+
+            int choice = input.nextInt();
+            input.nextLine();
+
+            if (choice == 0) {
+                isRemovingSauces = false;
+            } else if (choice > 0 && choice <= sauces.size()) {
+                String sauceToRemove = sauces.get(choice - 1);
+                sandwich.removeSauce(sauceToRemove);
+                System.out.println("Removed " + sauceToRemove);
+                isRemovingSauces = false;
+            } else {
+                System.out.println("Invalid choice");
+            }
+        }
+    }
+    private void extraMeatCheeseScreen(Sandwich sandwich) {
+        boolean isSelectingExtra = true;
+        while (isSelectingExtra) {
+            System.out.println("""
+        Add Extra Meat or Cheese?
+        A) Extra Meat
+        B) Extra Cheese
+        C) Remove Extra Topping
+        0) Done with extras""");
+
+            String choice = input.nextLine().toUpperCase();
+            switch(choice) {
+                case "A":
+                    ExtraTopping extraMeat = new ExtraTopping("Extra Meat",
+                            getSizeForExtra(sandwich));
+                    sandwich.addExtraTopping(extraMeat);
+                    System.out.println("Added Extra Meat (+$" + String.format("%.2f", extraMeat.getPrice()) + ")");
+                    break;
+                case "B":
+                    ExtraTopping extraCheese = new ExtraTopping("Extra Cheese",
+                            getSizeForExtra(sandwich));
+                    sandwich.addExtraTopping(extraCheese);
+                    System.out.println("Added Extra Cheese (+$" + String.format("%.2f", extraCheese.getPrice()) + ")");
+                    break;
+                case "C":
+                    removeExtraToppingScreen(sandwich);
+                    break;
+                case "0":
+                    isSelectingExtra = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice");
+            }
+        }
+    }
+    private ExtraTopping.ExtraToppingSize getSizeForExtra(Sandwich sandwich) {
+        Sandwich.SandwichSize sandwichSize = sandwich.getSize();
+
+        if (sandwichSize == null) {
+            return ExtraTopping.ExtraToppingSize.EIGHT;  // Default
+        }
+
+        switch (sandwichSize) {
+            case FOUR -> {
+                return ExtraTopping.ExtraToppingSize.FOUR;
+            }
+            case EIGHT -> {
+                return ExtraTopping.ExtraToppingSize.EIGHT;
+            }
+            case TWELVE -> {
+                return ExtraTopping.ExtraToppingSize.TWELVE;
+            }
+            default -> {
+                return ExtraTopping.ExtraToppingSize.EIGHT;
+            }
+        }
+    }
+    private void removeExtraToppingScreen(Sandwich sandwich) {
+        boolean isRemovingExtra = true;
+        while (isRemovingExtra) {
+            ArrayList<ExtraTopping> extraToppings = sandwich.getExtraTopping();  // Need getter
+
+            if (extraToppings.isEmpty()) {
+                System.out.println("No extra toppings to remove");
+                isRemovingExtra = false;
+            }
+
+            System.out.println("Remove Extra Topping:");
+            for (int i = 0; i < extraToppings.size(); i++) {
+                ExtraTopping extra = extraToppings.get(i);
+                System.out.println((i + 1) + ") " + extra.getName() +
+                        " (-$" + String.format("%.2f", extra.getPrice()) + ")");
+            }
+            System.out.println("0) Back");
+
+            int choice = input.nextInt();
+            input.nextLine();
+
+            if (choice == 0) {
+                isRemovingExtra = false;
+            } else if (choice > 0 && choice <= extraToppings.size()) {
+                sandwich.removeExtraTopping(choice - 1);  // Call your method
+                System.out.println("Extra topping removed");
+                isRemovingExtra = false;
+            } else {
+                System.out.println("Invalid choice");
+            }
+        }
+    }
     // Drink selection screen
     private void drinkScreen(){
         boolean isDrinkScreen = true;
