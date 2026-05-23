@@ -2,7 +2,7 @@ package ui;
 import model.*;
 
 
-
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class UserInterface {
@@ -64,6 +64,9 @@ public class UserInterface {
         4) Select cheese
         5) Select toppings
         6) Finish & Add to Cart
+        7) Remove topping
+        8) Toast Sandwich
+        9)
         0) Back to Order Screen""");
             int choice = input.nextInt();
             input.nextLine();
@@ -78,6 +81,9 @@ public class UserInterface {
                     System.out.println("Sandwich added to cart!");
                     isSandwichScreen = false;
                 }
+                case 7-> removeToppingScreen(sandwich);
+                case 8-> toastScreen(sandwich);
+                case 9-> saucesScreen(sandwich);
                 case 0 -> isSandwichScreen = false;
                 default -> System.out.println("Invalid input.");
             }
@@ -287,6 +293,109 @@ public class UserInterface {
             }
         }
     }
+    private void removeToppingScreen(Sandwich sandwich) {
+        boolean isRemovingTopping = true;
+        while (isRemovingTopping) {
+            System.out.println("""
+        Remove Topping:
+        """);
+
+            ArrayList<Topping> toppings = sandwich.getToppings();  // You need this getter
+
+            if (toppings.isEmpty()) {
+                System.out.println("No toppings to remove");
+                isRemovingTopping = false;
+            }
+
+            // Display toppings with numbers
+            for (int i = 0; i < toppings.size(); i++) {
+                Topping topping = toppings.get(i);
+                System.out.println((i + 1) + ") " + topping.name() +
+                        " (-$" + String.format("%.2f", topping.price()) + ")");
+            }
+            System.out.println("0) Back");
+
+            int choice = input.nextInt();
+            input.nextLine();
+
+            if (choice == 0) {
+                isRemovingTopping = false;
+            } else if (choice > 0 && choice <= toppings.size()) {
+                sandwich.removeTopping(choice - 1);  // Call the method
+                System.out.println("Topping removed");
+                isRemovingTopping = false;
+            } else {
+                System.out.println("Invalid choice");
+            }
+        }
+    }
+    private void toastScreen(Sandwich sandwich) {
+        System.out.println("""
+    Would you like your sandwich toasted?
+    A) Yes
+    B) No""");
+
+        String choice = input.nextLine().toUpperCase();
+        switch(choice) {
+            case "A":
+                sandwich.setToasted(true);
+                System.out.println("Sandwich will be toasted");
+                break;
+            case "B":
+                sandwich.setToasted(false);
+                System.out.println("Sandwich will not be toasted");
+                break;
+            default:
+                System.out.println("Invalid choice");
+        }
+    }
+    private void saucesScreen(Sandwich sandwich) {
+        boolean isSelectingSauces = true;
+        while (isSelectingSauces) {
+            System.out.println("""
+        Select sauces (select multiple or 0 to finish):
+        A) Mayo
+        B) Mustard
+        C) Ketchup
+        D) Ranch
+        E) Thousand Islands
+        F) Vinaigrette
+        0) Done with sauces""");
+
+            String choice = input.nextLine().toUpperCase();
+            switch(choice) {
+                case "A":
+                    sandwich.addSauce("Mayo");
+                    System.out.println("Added Mayo");
+                    break;
+                case "B":
+                    sandwich.addSauce("Mustard");
+                    System.out.println("Added Mustard");
+                    break;
+                case "C":
+                    sandwich.addSauce("Ketchup");
+                    System.out.println("Added Ketchup");
+                    break;
+                case "D":
+                    sandwich.addSauce("Ranch");
+                    System.out.println("Added Ranch");
+                    break;
+                case "E":
+                    sandwich.addSauce("Thousand Islands");
+                    System.out.println("Added Thousand Islands");
+                    break;
+                case "F":
+                    sandwich.addSauce("Vinaigrette");
+                    System.out.println("Added Vinaigrette");
+                    break;
+                case "0":
+                    isSelectingSauces = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice");
+            }
+        }
+        }
     // Drink selection screen
     private void drinkScreen(){
         boolean isDrinkScreen = true;
@@ -396,24 +505,24 @@ public class UserInterface {
             Chips chips=null;
             switch(choice) {
                 case "A","a":
-                    chips = new Chips("Lay's Classic", 0, "");
+                    chips = new Chips("Lay's Classic", 1.50, "");
                     break;
                 case "B","b":
-                    chips = new Chips("Doritos Nacho Cheese", 0, "");
+                    chips = new Chips("Doritos Nacho Cheese", 1.50, "");
                     break;
                 case "C","c":
-                    chips = new Chips("Cheetos Flamin' Hot", 0, "");
+                    chips = new Chips("Cheetos Flamin' Hot", 1.50, "");
                     break;
                 case "D","d":
                     System.out.println("Fritos Original");
-                    chips = new Chips("Added Fritos Original", 0, "");
+                    chips = new Chips("Added Fritos Original", 1.50, "");
                     break;
                 case "E","e":
                     chips = new Chips("Pringles Sour Cream & Onion", 1.50, "Snack");
                     break;
                 case "F","f":
                     System.out.println("Added Kettle Cooked");
-                    chips =new Chips("Kettle Cooked", 0, "");
+                    chips =new Chips("Kettle Cooked", 1.50, "");
                     break;
                 case "G","g":
                     isChipsScreen = false;

@@ -8,6 +8,8 @@ public class Sandwich extends MenuItem {
     private String meat;
     private String cheese;
     private final ArrayList<Topping> toppings;
+    private boolean isToasted = false;
+    private final ArrayList<String> sauces = new ArrayList<>();
 
     public Sandwich() {
         super("Custom Sandwich", 0, "");
@@ -58,7 +60,24 @@ public class Sandwich extends MenuItem {
             toppings.remove(index);
         }
     }
+    public ArrayList<Topping> getToppings() {
+        return toppings;
+    }
+    public void setToasted(boolean toasted) {
+        this.isToasted = toasted;
+    }
 
+    public boolean isToasted() {
+        return isToasted;
+    }
+    public void addSauce(String sauce) {
+        if (!sauces.contains(sauce)) {
+            sauces.add(sauce);
+        }
+    }
+    public void removeSauce(String sauce) {
+        sauces.remove(sauce);
+    }
     @Override
     public double calculatePrice() {
         return this.price;  // Return current price
@@ -83,6 +102,7 @@ public class Sandwich extends MenuItem {
         sb.append("  • Bread: ").append(bread != null ? bread : "Not Selected").append("\n");
         sb.append("  • Meat: ").append(meat != null ? meat : "None").append("\n");
         sb.append("  • Cheese: ").append(cheese != null ? cheese : "None").append("\n");
+        sb.append("  • Toasted: ").append(isToasted ? "Yes" : "No").append("\n");
 
         // Separate regular and premium
         ArrayList<String> regularNames = new ArrayList<>();
@@ -101,6 +121,9 @@ public class Sandwich extends MenuItem {
                 .append("\n");
         sb.append("  • Premium Toppings: ")
                 .append(premiumNames.isEmpty() ? "None" : String.join(", ", premiumNames))
+                .append("\n");
+        sb.append("  • Sauces: ")
+                .append(sauces.isEmpty() ? "None" : String.join(", ", sauces))
                 .append("\n");
 
         return sb.toString().trim();

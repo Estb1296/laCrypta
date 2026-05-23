@@ -25,7 +25,10 @@ public class CheckOutScreen {
             int choice = input.nextInt();
             input.nextLine();
                 switch (choice) {
-                    case 1 -> completeCheckout();
+                   case 1 -> {
+                        completeCheckout();
+                        inCheckout = false;  // EXIT LOOP HERE cause once a person confirms they don't need to stay in the checkout screen
+                    }
                     case 2 -> removeItemFromCart();
                     case 3 -> inCheckout = false;
                     case 0 -> {

@@ -20,7 +20,7 @@ public class Chips extends MenuItem {
 
     @Override
     public double getPrice() {
-        return getPrice(); // Asks the parent class for the price we sent up
+        return price; // Asks the parent class for the price we sent up
     }
 }
 
