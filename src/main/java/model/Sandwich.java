@@ -19,6 +19,9 @@ public class Sandwich extends MenuItem {
     public void setBread(String bread) {
         this.bread = bread;
     }
+    public String getBread(){
+        return bread;
+    }
 
     public ArrayList<String> getSauces() {
         return sauces;

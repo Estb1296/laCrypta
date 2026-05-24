@@ -80,7 +80,6 @@ public class UserInterface {
     private void sandwichScreen() {
         Sandwich sandwich = new Sandwich();
         boolean isSandwichScreen = true;
-        boolean addedToCart = false; // Tracks if item is safely saved
         while (isSandwichScreen) {
             displaySandwichSummary(sandwich);
             System.out.println("""
@@ -94,6 +93,7 @@ public class UserInterface {
         8) Toast Sandwich
         9) Sauces
         10) Extra Toppings(Cheese,Meat)
+        11) Sandwich Summary
         0) Back to Order Screen""");
             int choice = input.nextInt();
             input.nextLine();//clears buffer
@@ -105,8 +105,7 @@ public class UserInterface {
                 case 5 -> toppingsScreen(sandwich);
                 case 6 -> {
                     currentOrder.addItem(sandwich);
-                    System.out.println("Sandwich added to cart!");
-                    addedToCart =true;
+                    System.out.println("Sandwich added to cart! 🛒");
                     isSandwichScreen = false;
                 }
                 case 7-> removeToppingScreen(sandwich);
@@ -114,16 +113,31 @@ public class UserInterface {
                 case 9-> saucesScreen(sandwich);
                 case 10->extraMeatCheeseScreen(sandwich);
                 case 11 -> {
-                    displaySandwichSummary(sandwich);  // Final review before adding
-                    System.out.println("\nAdd this sandwich to cart? (Y/N)");
-                    String confirm = input.nextLine().toUpperCase();
+                    displaySandwichSummary(sandwich);
+                    System.out.print("\nAdd this customized sandwich to your cart? (Y/N): ");
+                    String confirm = input.nextLine().trim().toUpperCase();
                     if (confirm.equals("Y")) {
                         currentOrder.addItem(sandwich);
-                        System.out.println("Sandwich added to cart!");
+                        System.out.println("Sandwich added to cart! 🛒");
                         isSandwichScreen = false;
                     }
                 }
-                case 0 -> isSandwichScreen = false;
+                case 0 -> {
+                    if (sandwich.getBread() != null || !sandwich.getToppings().isEmpty()) {
+                        System.out.print("\n⚠️ You are leaving without adding to your cart! Save progress? (Y/N): ");
+                        String confirm = input.nextLine().trim().toUpperCase();
+
+                        if (confirm.equals("Y")) {
+                            currentOrder.addItem(sandwich);
+                            System.out.println("Sandwich successfully saved to cart! 🛒");
+                        } else {
+                            System.out.println("Sandwich changes discarded.");
+                        }
+                    } else {
+                        System.out.println("Returned to order screen.");
+                    }
+                    isSandwichScreen = false;
+                }
                 default -> System.out.println("Invalid input.");
             }
         }
