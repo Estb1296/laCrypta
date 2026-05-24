@@ -1,5 +1,6 @@
 package ui;
 import data.OrderRepository;
+
 import model.*;
 
 
@@ -9,9 +10,10 @@ import java.util.Scanner;
 public class UserInterface {
     static Scanner input = new Scanner(System.in);
     private final Order currentOrder = new Order();
+    private final OrderRepository orderRepository = new OrderRepository();
     private final CheckOutScreen checkoutScreen;
+
     public UserInterface() {
-        OrderRepository orderRepository = new OrderRepository();
         this.checkoutScreen = new CheckOutScreen(currentOrder, orderRepository, input);
     }
     public void display(){
@@ -108,12 +110,16 @@ public class UserInterface {
         System.out.println("""
     A) White Bread
     B) Wheat Bread
-    C) Sourdough""");
+    C) Sourdough
+    D)Rye
+    E)Wrap""");
         String choice = input.nextLine().toUpperCase();
         switch(choice) {
             case "A" -> sandwich.setBread("White");
             case "B" -> sandwich.setBread("Wheat");
             case "C" -> sandwich.setBread("Sourdough");
+            case "D" -> sandwich.setBread("Rye");
+            case "E" -> sandwich.setBread("Wrap");
         }
     }
     private void sizeScreen(Sandwich sandwich) {
@@ -483,26 +489,8 @@ public class UserInterface {
         }
     }
     private ExtraTopping.ExtraToppingSize getSizeForExtra(Sandwich sandwich) {
-        Sandwich.SandwichSize sandwichSize = sandwich.getSize();
-
-        if (sandwichSize == null) {
-            return ExtraTopping.ExtraToppingSize.EIGHT;  // Default
-        }
-
-        switch (sandwichSize) {
-            case FOUR -> {
-                return ExtraTopping.ExtraToppingSize.FOUR;
-            }
-            case EIGHT -> {
-                return ExtraTopping.ExtraToppingSize.EIGHT;
-            }
-            case TWELVE -> {
-                return ExtraTopping.ExtraToppingSize.TWELVE;
-            }
-            default -> {
-                return ExtraTopping.ExtraToppingSize.EIGHT;
-            }
-        }
+        Sandwich.SandwichSize size = sandwich.getSize();
+        return (size != null) ? size.getExtraSize() : ExtraTopping.ExtraToppingSize.EIGHT;
     }
     private void removeExtraToppingScreen(Sandwich sandwich) {
         boolean isRemovingExtra = true;

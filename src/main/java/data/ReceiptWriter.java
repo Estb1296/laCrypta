@@ -3,8 +3,10 @@ package data;
 import model.Order;
 import model.MenuItem;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -21,16 +23,22 @@ public class ReceiptWriter {
      * @throws IOException If file writing fails
      */
     public String saveReceipt(Order order) throws IOException {
-        // Generate timestamp filename
-        String filename = generateFilename();
-        String filepath = RECEIPTS_FOLDER + filename;
+        // Create folder and get path
+        String folderPath = createAndGetFolderPath();
+
+        // Generate filename for today
+        LocalDate today = LocalDate.now();
+        String filename = generateFilename(today);
+        String filepath = folderPath + filename;
 
         // Generate receipt content
         String receiptContent = generateReceiptContent(order);
 
         // Write to file
-        try (FileWriter writer = new FileWriter(filepath)) {
+        // Append to file (append=true means don't overwrite)
+        try (FileWriter writer = new FileWriter(filepath, true)) {
             writer.write(receiptContent);
+            writer.write("\n════════════════════════════════════════\n\n");  // Separator
         }
 
         return filename;
@@ -40,10 +48,9 @@ public class ReceiptWriter {
      * Generates a unique filename with timestamp
      * Format: receipt_YYYY_MM_DD_HH_MM_SS_mmm.txt
      */
-    private String generateFilename() {
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss_SSS");
-        return "receipt_" + now.format(formatter) + ".txt";
+    private String generateFilename(LocalDate date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return "orders-" + date.format(formatter) + ".txt";
     }
 
     /**
@@ -98,7 +105,6 @@ public class ReceiptWriter {
                 categoryItems.add(item);
             }
         }
-
         if (!categoryItems.isEmpty()) {
             receipt.append(category.toUpperCase()).append("S:\n");
             int itemNum = 1;
@@ -109,5 +115,25 @@ public class ReceiptWriter {
             }
             receipt.append("\n");
         }
+    }
+    /**
+     * Creates the folder structure for today's receipts
+     * Creates: receipts/2026-01-15/ (if it doesn't exist)
+     * @return The folder path
+     */
+    private String createAndGetFolderPath() {
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String folderPath = RECEIPTS_FOLDER + today.format(formatter) + "/";
+
+        // Create folder if it doesn't exist
+        File folder = new File(folderPath);
+        if (!folder.exists()) {
+            boolean created = folder.mkdirs();  // Store the result
+            if (!created) {
+                System.out.println("Warning: Could not create folder: " + folderPath);
+            }
+        }
+        return folderPath;
     }
 }

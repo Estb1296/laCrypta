@@ -29,20 +29,23 @@ public class Sandwich extends MenuItem {
     }
 
     public enum SandwichSize {
-        FOUR("4\"", 6.99),
-        EIGHT("8\"", 8.99),
-        TWELVE("12\"", 10.99);
+        FOUR("4\"", 5.50, ExtraTopping.ExtraToppingSize.FOUR),
+        EIGHT("8\"", 7.00, ExtraTopping.ExtraToppingSize.EIGHT),
+        TWELVE("12\"", 8.50, ExtraTopping.ExtraToppingSize.TWELVE);
 
         private final String display;
         private final double price;
+        private final ExtraTopping.ExtraToppingSize extraSize;
 
-        SandwichSize(String display, double price) {
+        SandwichSize(String display, double price, ExtraTopping.ExtraToppingSize extraSize) {
             this.display = display;
             this.price = price;
+            this.extraSize = extraSize;
         }
 
         public String getDisplay() { return display; }
-        public double getPrice() {return price;}
+        public double getPrice() { return price; }
+        public ExtraTopping.ExtraToppingSize getExtraSize() { return extraSize; }
     }
 
 
