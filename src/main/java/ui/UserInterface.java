@@ -22,7 +22,8 @@ public class UserInterface {
             System.out.println("""
               1) New Order
               0) Exit - exit the application
-              7)""");
+              7) Admin
+              """);
             int choice = input.nextInt();
             input.nextLine(); // Clear the buffer
             switch (choice) {
@@ -61,7 +62,15 @@ public class UserInterface {
                 case 2 -> drinkScreen();           // Drink selection
                 case 3 -> chipsScreen();           // Chips selection
                 case 4 -> checkoutScreen.display();  // Call checkout screen
-                case 0 -> isOrderScreen = false;
+                case 0 -> {
+                    //Tell the repository to log that this specific monetary value was aborted
+                    if (!currentOrder.getItems().isEmpty()) {
+                        orderRepository.logCancelledOrder(currentOrder);
+                    }
+                    //Clear the cart locally
+                    currentOrder.clearCart();
+                    isOrderScreen = false;
+                }
                 default -> System.out.println("Invalid input.");
             }
         }
@@ -71,6 +80,7 @@ public class UserInterface {
     private void sandwichScreen() {
         Sandwich sandwich = new Sandwich();
         boolean isSandwichScreen = true;
+        boolean addedToCart = false; // Tracks if item is safely saved
         while (isSandwichScreen) {
             displaySandwichSummary(sandwich);
             System.out.println("""
@@ -86,7 +96,7 @@ public class UserInterface {
         10) Extra Toppings(Cheese,Meat)
         0) Back to Order Screen""");
             int choice = input.nextInt();
-            input.nextLine();
+            input.nextLine();//clears buffer
             switch (choice) {
                 case 1 -> breadScreen(sandwich);
                 case 2 -> sizeScreen(sandwich);
@@ -96,6 +106,7 @@ public class UserInterface {
                 case 6 -> {
                     currentOrder.addItem(sandwich);
                     System.out.println("Sandwich added to cart!");
+                    addedToCart =true;
                     isSandwichScreen = false;
                 }
                 case 7-> removeToppingScreen(sandwich);

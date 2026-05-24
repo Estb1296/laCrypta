@@ -101,4 +101,19 @@ public class OrderRepository {
     private String generateOrderID() {
         return "ORD-" + System.currentTimeMillis();
     }
+    public void logCancelledOrder(Order order) {
+        AuditLog cancelLog = new AuditLog(
+                "ORD-" + System.currentTimeMillis(),
+                "ORDER_CANCELLED", // 🔥 Explicitly tags it as a cancellation!
+                order.calculatePrice(),
+                order.getItems().size(),
+                "User explicitly aborted cart with items inside."
+        );
+        try {
+            auditLogger.logAudit(cancelLog);
+        } catch (IOException e) {
+            throw new RuntimeException("The order wasn't properly tracked.");
+        }
+        auditLogs.add(cancelLog); // Saves it to cache for Option 6 in admin panel!
+    }
 }

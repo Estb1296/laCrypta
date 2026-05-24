@@ -93,18 +93,19 @@ import java.util.Scanner;
             System.out.println("║   FINANCIAL STATISTICS LOG     ║");
             System.out.println("╚════════════════════════════════╝\n");
 
+            // Pull from the in-memory cache directly
             ArrayList<Order> allOrders = orderRepository.getAllOrders();
             int totalOrderCount = allOrders.size();
 
             // 💰 1. Stream for Gross Revenue
             double grossRevenue = allOrders.stream()
-                    .mapToDouble(Order::calculatePrice) // Pulls the price of each order
-                    .sum();                             // Tallies them all up
+                    .mapToDouble(Order::calculatePrice)
+                    .sum();
 
             // 🛒 2. Stream for Grand Total Items Sold
             int grandTotalItemsSold = allOrders.stream()
-                    .mapToInt(order -> order.getItems().size()) // Pulls the size of each order's item list
-                    .sum();                                     // Tallies them all up
+                    .mapToInt(order -> order.getItems().size())
+                    .sum();
 
             // Calculate Average Order Value (AOV) safely
             double averageOrderValue = (totalOrderCount > 0) ? (grossRevenue / totalOrderCount) : 0.0;
@@ -115,6 +116,35 @@ import java.util.Scanner;
             System.out.printf("💵 Gross Revenue Stream:  $%.2f\n", grossRevenue);
             System.out.printf("📈 Average Order Value:   $%.2f\n", averageOrderValue);
             System.out.println("\n════════════════════════════════\n");
+
+            if (totalOrderCount > 0) {
+                System.out.print("❓ Would you like to view detailed receipts for these transactions? (Y/N): ");
+                String response = scanner.nextLine().trim().toUpperCase();
+
+                if (response.equals("Y")) {
+                    System.out.println("\n📜 --- COMPLETED TRANSACTIONS LEDGER (CACHE) ---");
+
+                    // Loop through the cache sequentially to print the active memory elements
+                    for (int i = 0; i < totalOrderCount; i++) {
+                        Order order = allOrders.get(i);
+
+                        System.out.printf("  👉 Transaction #%d | 💰 Total: $%.2f | 📦 Unique Items: %d\n",
+                                (i + 1),
+                                order.calculatePrice(),
+                                order.getItems().size()
+                        );
+
+                        // Nest an internal streaming operation to print item details inside this ticket
+                        order.getItems().forEach(item ->
+                                System.out.println("     ↳ " + item.getName() + " ($" + String.format("%.2f", item.getPrice()) + ")")
+                        );
+                        System.out.println("  ────────────────────────────────────────");
+                    }
+                    System.out.println("------------------------------------------------\n");
+                }
+            } else {
+                System.out.println("ℹ️ No transactions available in the local cache yet.");
+            }
         }
         private void displayAllOrders() {
             System.out.println("\n╔════════════════════════════════════════════════════════════════╗");
