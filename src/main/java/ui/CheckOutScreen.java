@@ -88,15 +88,15 @@ public class CheckOutScreen {
         System.out.println("Total Amount: $" + String.format("%.2f", total));
 
         try {
-            // Use repository to handle everything (receipt + audit)
+            // Use repository to handle receipt + audit logging
             String filename = orderRepository.completeOrder(currentOrder);
             System.out.println("Receipt saved: " + filename);
+            System.out.println("Thank you for your order!");
 
         } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("Error saving receipt: " + e.getMessage());
         }
 
-        System.out.println("Thank you for your order!");
         currentOrder.clearCart();
     }
 }

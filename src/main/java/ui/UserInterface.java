@@ -4,6 +4,7 @@ import data.OrderRepository;
 import model.*;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -12,7 +13,6 @@ public class UserInterface {
     private final Order currentOrder = new Order();
     private final OrderRepository orderRepository = new OrderRepository();
     private final CheckOutScreen checkoutScreen;
-
     public UserInterface() {
         this.checkoutScreen = new CheckOutScreen(currentOrder, orderRepository, input);
     }
@@ -21,12 +21,18 @@ public class UserInterface {
         while (isRunning) {
             System.out.println("""
               1) New Order
-              0) Exit - exit the application""");
+              0) Exit - exit the application
+              7)""");
             int choice = input.nextInt();
             input.nextLine(); // Clear the buffer
             switch (choice) {
                 case 1 -> OrderScreen();
                 case 0 -> isRunning = false;
+                case 7 -> {
+                    System.out.println("\n════════════════════════════════");
+                    new AdminUserInterface(orderRepository);
+                    System.out.println("════════════════════════════════\n");
+                }
                 default -> System.out.println("Invalid input.");
             }
         }
@@ -35,6 +41,12 @@ public class UserInterface {
     // Order Screen
     private void OrderScreen() {
         boolean isOrderScreen = true;
+        // Log order start when entering this screen
+        try {
+            orderRepository.logOrderStart();
+        } catch (IOException e) {
+            System.out.println("Audit logging error: " + e.getMessage());
+        }
         while (isOrderScreen) {
             System.out.println("""
             1) Add Sandwich
