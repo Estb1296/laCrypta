@@ -65,14 +65,25 @@ public class CheckOutScreen {
     }
 
     private void displayItemsByCategory(ArrayList<MenuItem> items, String category) {
-        System.out.println("\n" + category.toUpperCase() + "S:");
-        int itemNumber = 1;
-        for (MenuItem item : items) {
-            if (item.getCategory().equals(category)) {
-                System.out.println(itemNumber + ") " + item.toReceiptLine());
-                System.out.println(item.getDescription());
-                itemNumber++;
-            }
+        // We use a regular integer now since a sequential stream loop doesn't require concurrency safety
+        java.util.concurrent.atomic.AtomicInteger counter = new java.util.concurrent.atomic.AtomicInteger(1);
+
+        // 1. Filter and process using forEach for good optimization
+        items.stream()
+                .filter(item -> item.getCategory().equalsIgnoreCase(category)) // Uses your abstract getCategory() method seamlessly!
+                .forEach(item -> {
+                    // Print the item dynamically
+                    System.out.println(" " + counter.getAndIncrement() + ") " + item.getName() + " - $" + String.format("%.2f", item.getPrice()));
+
+                    // Use Java Pattern Matching to cleanly
+                    if (item instanceof Sandwich sandwichObj) {
+                        System.out.println(sandwichObj.getDescription());
+                    }
+                });
+
+        //If the counter never incremented, nothing matched this category
+        if (counter.get() == 1) {
+            System.out.println("  (None selected)");
         }
     }
     private void removeItemFromCart() {
