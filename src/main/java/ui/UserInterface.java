@@ -2,6 +2,7 @@ package ui;
 import data.OrderRepository;
 
 import model.*;
+import util.InputValidator;
 
 
 import java.io.IOException;
@@ -558,7 +559,7 @@ public class UserInterface {
             }
             System.out.println("0) Back");
 
-            int choice = input.nextInt();
+            int choice =InputValidator.getValidMenuChoice(input, 0, 3);
             input.nextLine();
 
             if (choice == 0) {
@@ -594,7 +595,7 @@ public class UserInterface {
         G) Coffee
         H) Back to Order Screen""");
 
-            String choice = input.nextLine();
+            String choice = InputValidator.getValidCharChoice(input, "ABCDEFGH");
             Drink drink;
             switch(choice) {
                 case "A","a":
@@ -654,7 +655,7 @@ public class UserInterface {
     B) Medium - $2.50
     C) Large - $3.00""");
 
-        String choice = input.nextLine();
+        String choice =  InputValidator.getValidCharChoice(input, "ABC");
         switch(choice) {
             case "A","a":
                 drink.setSize("Small");
@@ -684,7 +685,7 @@ public class UserInterface {
             F) Kettle Cooked
             G) Back to Order Screen""");
 
-            String choice = input.nextLine();
+            String choice = InputValidator.getValidCharChoice(input, "ABCDEFG");
             Chips chips=null;
             switch(choice) {
                 case "A","a":
