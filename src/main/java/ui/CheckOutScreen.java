@@ -18,32 +18,37 @@ public class CheckOutScreen {
         this.orderRepository = orderRepository;
         this.input = input;
     }
-    public void display() {
-        boolean inCheckout = true;
-        while (inCheckout) {
+    public String display() {
+
             displayOrderSummary();
 
             System.out.println("1) Confirm Order");
             System.out.println("2) Continue Shopping");
+            System.out.println("3) Remove Item from Cart");
             System.out.println("0) Cancel Order");
 
             int choice = input.nextInt();
             input.nextLine();
-                switch (choice) {
-                   case 1 -> {
-                        completeCheckout();
-                        inCheckout = false;  // EXIT LOOP HERE cause once a person confirms they don't need to stay in the checkout screen
-                    }
-                    case 2 -> removeItemFromCart();
-                    case 3 -> inCheckout = false;
-                    case 0 -> {
-                        currentOrder.clearCart();
-                        inCheckout = false;
-                    }
-                    default -> System.out.println("Invalid choice");
-                }
 
-    }
+            switch (choice) {
+                case 1 -> {
+                    completeCheckout();
+                    return "HOME";  // ✅ Order complete, go home
+                }
+                case 2 -> {
+                    System.out.println("Returning to shopping...");
+                    return "CONTINUE";  // ✅ Continue shopping
+                }
+                case 3 -> removeItemFromCart();
+                case 0 -> {
+                    System.out.println("Order cancelled.");
+                    currentOrder.clearCart();
+
+                    return "HOME";  // ✅ Go back home
+                }
+                default -> System.out.println("Invalid choice");
+            }
+        return "HOME";  // Default fallback
     }
 
     private void displayOrderSummary() {
@@ -87,11 +92,49 @@ public class CheckOutScreen {
         }
     }
     private void removeItemFromCart() {
-        System.out.print("Enter item number to remove: ");
-        int index = input.nextInt() - 1;
+        ArrayList<MenuItem> items = currentOrder.getItems();
+
+        if (items.isEmpty()) {
+            System.out.println("❌ Cart is empty, nothing to remove.");
+            return;
+        }
+
+        // Display items with numbers
+        System.out.println("\n📦 ITEMS IN CART:");
+        for (int i = 0; i < items.size(); i++) {
+            MenuItem item = items.get(i);
+            System.out.println("  " + (i + 1) + ") " + item.getName() +
+                    " - $" + String.format("%.2f", item.getPrice()));
+        }
+
+        System.out.print("\n🗑️  Enter item number to remove (0 to cancel): ");
+        int choice = input.nextInt();
         input.nextLine();
-        currentOrder.removeItem(index);
-        System.out.println("Item removed");
+
+        if (choice == 0) {
+            System.out.println("Removal cancelled.");
+            return;
+        }
+
+        if (choice > 0 && choice <= items.size()) {
+            // Store info before removing
+            MenuItem removedItem = items.get(choice - 1);
+            String removedName = removedItem.getName();
+            double removedPrice = removedItem.getPrice();
+
+            // Remove the item
+            currentOrder.removeItem(choice - 1);
+
+            // Show confirmation
+            System.out.println("\n✅ ITEM REMOVED:");
+            System.out.println("   Removed: " + removedName + " (-$" +
+                    String.format("%.2f", removedPrice) + ")");
+            System.out.println("   New Cart Total: $" +
+                    String.format("%.2f", currentOrder.calculatePrice()));
+            System.out.println("   Items Remaining: " + currentOrder.getItems().size() + "\n");
+        } else {
+            System.out.println("❌ Invalid item number.");
+        }
     }
     private void completeCheckout() {
         double total = currentOrder.calculatePrice();

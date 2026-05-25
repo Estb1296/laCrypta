@@ -12,7 +12,7 @@ public class UserInterface {
     static Scanner input = new Scanner(System.in);
     private final Order currentOrder = new Order();
     private final OrderRepository orderRepository = new OrderRepository();
-    private final CheckOutScreen checkoutScreen;
+    private CheckOutScreen checkoutScreen;
     public UserInterface() {
         this.checkoutScreen = new CheckOutScreen(currentOrder, orderRepository, input);
     }
@@ -61,7 +61,18 @@ public class UserInterface {
                 case 1 -> sandwichScreen();      // Sandwich customization
                 case 2 -> drinkScreen();           // Drink selection
                 case 3 -> chipsScreen();           // Chips selection
-                case 4 -> checkoutScreen.display();  // Call checkout screen
+                case 4 -> {
+                    // Instantiates the screen and capture its exit routing instruction
+                    checkoutScreen = new CheckOutScreen(currentOrder, orderRepository, input);
+                    String nextDestination = checkoutScreen.display();
+
+                    if (nextDestination.equals("HOME")) {
+                        // Break out of the active order menu loop entirely to return to the home screen
+                        isOrderScreen = false;
+                    }
+                    // If it returns "CONTINUE", this block is skipped, and the loop naturally loops back to the order choices!
+                }
+
                 case 0 -> {
                     //Tell the repository to log that this specific monetary value was aborted
                     if (!currentOrder.getItems().isEmpty()) {
