@@ -1,0 +1,56 @@
+╔════════════════════════════════════╗
+║         SANDWICH SHOP RECEIPT       ║
+╚════════════════════════════════════╝
+
+Date & Time: 2026-05-24 16:55:52
+════════════════════════════════════
+
+ORDER DETAILS:
+────────────────────────────────────
+
+
+════════════════════════════════════
+SUBTOTAL: $2.50
+TAX (0%%): $0.00
+TOTAL: $2.50
+════════════════════════════════════
+
+Thank you for your order!
+Please come again soon!
+
+════════════════════════════════════════
+
+╔════════════════════════════════════╗
+║         SANDWICH SHOP RECEIPT       ║
+╚════════════════════════════════════╝
+
+Date & Time: 2026-05-24 18:17:51
+════════════════════════════════════
+
+ORDER DETAILS:
+────────────────────────────────────
+
+SANDWICHS:
+1) 8" Rye Sandwich (Toasted) - TOASTED - $10.50
+   Sandwich Specifications:
+  • Size: 8"
+  • Bread: Rye
+  • Meat: Tuna
+  • Cheese: American
+  • Toasted: Yes
+  • Regular Toppings: Onion, Pickles
+  • Premium Toppings: Bacon (+$1.50)
+  • Sauces: None
+
+
+════════════════════════════════════
+SUBTOTAL: $14.50
+TAX (0%%): $0.00
+TOTAL: $14.50
+════════════════════════════════════
+
+Thank you for your order!
+Please come again soon!
+
+════════════════════════════════════════
+
