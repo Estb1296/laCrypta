@@ -10,7 +10,6 @@ public class Drink extends MenuItem {
         return "Drink: " + getName() + " ($" + String.format("%.2f", getPrice()) + ")";
     }
 
-
     public void setSize(String size) {
             this.size = size;
         }
