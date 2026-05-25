@@ -103,8 +103,11 @@ import java.util.Scanner;
             while (true) {
                 try {
                     System.out.print(prompt);
-                    int value = input.nextInt();
-                    input.nextLine();  // Clear buffer
+                    // Read the entire line as text right away (completely eliminates buffer issues!)
+                    String rawInput = input.nextLine().trim();
+
+                    // Try to convert the text to a number
+                    int value = Integer.parseInt(rawInput);
 
                     if (value < minValue || value > maxValue) {
                         System.out.println("❌ Please enter a number between " + minValue + " and " + maxValue);
@@ -112,8 +115,7 @@ import java.util.Scanner;
                     }
 
                     return value;
-                } catch (InputMismatchException e) {
-                    input.nextLine();  // Clear invalid input
+                } catch (NumberFormatException e) { // Catches anything that isn't a pure number
                     System.out.println("❌ Invalid input. Please enter a whole number.");
                 }
             }

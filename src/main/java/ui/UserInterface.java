@@ -25,8 +25,7 @@ public class UserInterface {
               0) Exit - exit the application
               7) Admin
               """);
-            int choice = input.nextInt();
-            input.nextLine(); // Clear the buffer
+            int choice = InputValidator.getValidIntegerInput(input,"Enter a valid choice and try again.",0,7);
             switch (choice) {
                 case 1 -> OrderScreen();
                 case 0 -> isRunning = false;
@@ -103,7 +102,6 @@ public class UserInterface {
         11) Sandwich Summary
         0) Back to Order Screen""");
             int choice =InputValidator.getValidIntegerInput(input,"Invalid Input!Please enter a valid number choice",0,11);
-            input.nextLine();//clears buffer
             switch (choice) {
                 case 1 -> breadScreen(sandwich);
                 case 2 -> sizeScreen(sandwich);
@@ -155,9 +153,9 @@ public class UserInterface {
     A) White Bread
     B) Wheat Bread
     C) Sourdough
-    D)Rye
-    E)Wrap""");
-        String choice = input.nextLine().toUpperCase();
+    D) Rye
+    E) Wrap""");
+        String choice = InputValidator.getValidCharChoice(input, "ABCDE");
         switch(choice) {
             case "A" -> sandwich.setBread("White");
             case "B" -> sandwich.setBread("Wheat");
@@ -405,17 +403,14 @@ public class UserInterface {
             }
             System.out.println("0) Back");
 
-            int choice = input.nextInt();
-            input.nextLine();
+            int choice = InputValidator.getValidIntegerInput(input, "Enter choice: ", 0, toppings.size());
 
             if (choice == 0) {
                 isRemovingTopping = false;
-            } else if (choice > 0 && choice <= toppings.size()) {
-                sandwich.removeTopping(choice - 1);  // Call the method
-                System.out.println("Topping removed");
-                isRemovingTopping = false;
             } else {
-                System.out.println("Invalid choice");
+                // No try-catch needed here anymore! My validator guarantees a safe index.
+                sandwich.removeTopping(choice - 1);
+                System.out.println("Topping removed");
             }
         }
     }
@@ -505,7 +500,7 @@ public class UserInterface {
             }
             System.out.println("0) Back");
 
-            int choice = input.nextInt();
+            int choice = InputValidator.getValidIntegerInput(input, "Enter choice: ", 0, sauces.size());
             input.nextLine();
 
             if (choice == 0) {
@@ -708,31 +703,20 @@ public class UserInterface {
             String choice = InputValidator.getValidCharChoice(input, "ABCDEFG");
             Chips chips=null;
             switch(choice) {
-                case "A","a":
-                    chips = new Chips("Lay's Classic", 1.50, "");
-                    break;
-                case "B","b":
-                    chips = new Chips("Doritos Nacho Cheese", 1.50, "");
-                    break;
-                case "C","c":
-                    chips = new Chips("Cheetos Flamin' Hot", 1.50, "");
-                    break;
-                case "D","d":
-                    System.out.println("Fritos Original");
-                    chips = new Chips("Added Fritos Original", 1.50, "");
-                    break;
-                case "E","e":
-                    chips = new Chips("Pringles Sour Cream & Onion", 1.50, "Snack");
-                    break;
-                case "F","f":
-                    System.out.println("Added Kettle Cooked");
-                    chips =new Chips("Kettle Cooked", 1.50, "");
-                    break;
-                case "G","g":
-                    isChipsScreen = false;
-                    break;
-                default:
-                    System.out.println("Invalid choice");
+                case "A","a" -> chips = new Chips("Lay's Classic", 1.50, "");
+
+                case "B","b" -> chips = new Chips("Doritos Nacho Cheese", 1.50, "");
+
+                case "C","c" -> chips = new Chips("Cheetos Flamin' Hot", 1.50, "");
+
+                case "D","d" -> chips = new Chips("Fritos Original", 1.50, "");
+
+                case "E","e" -> chips = new Chips("Pringles Sour Cream & Onion", 1.50, "Snack");
+
+                case "F","f" -> chips = new Chips("Kettle Cooked", 1.50, "");
+
+                case "G","g" -> isChipsScreen = false;
+
             }
             if (chips != null) {
                 currentOrder.addItem(chips); // Replace 'currentOrder' with your actual Order tracking variable name
