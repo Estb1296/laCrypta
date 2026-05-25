@@ -25,7 +25,7 @@ public class UserInterface {
               0) Exit - exit the application
               7) Admin
               """);
-            int choice = InputValidator.getValidIntegerInput(input,"Enter a valid choice:",0,7);
+            int choice = InputValidator.getValidMenuChoice(input, 0, 7);
             switch (choice) {
                 case 1 -> OrderScreen();
                 case 0 -> isRunning = false;

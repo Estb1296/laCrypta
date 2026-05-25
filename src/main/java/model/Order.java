@@ -6,6 +6,7 @@ public class Order extends MenuItem implements Priceable{
     private final ArrayList<MenuItem> items;
 
     private double total;
+    private double couponDiscount = 0.0;
 
     public Order() {
         super("Order", 0, "Customer Order");
@@ -34,10 +35,28 @@ public class Order extends MenuItem implements Priceable{
     public void clearCart() {
         items.clear();
         total = 0.0;
+        this.couponDiscount = 0.0;
+    }
+
+        // Hidden matching key
+    public boolean isValidPromoCode(String userCode) {
+    return userCode.equals("Craig26@");
+    }
+    public void setDiscountAmount(double amount) {
+        this.couponDiscount = amount;
+    }
+
+    public double getCouponDiscount() {
+        return this.couponDiscount;
     }
     @Override
     public double calculatePrice() {
-        return total;
+        double subtotal = 0.0;
+        for (MenuItem item : items) {
+            subtotal += item.getPrice();
+        }
+        double finalTotal = subtotal - couponDiscount;
+        return Math.max(0.0, finalTotal); // Keeps total at or above $0.00
     }
     @Override
     public String toReceiptLine() {
