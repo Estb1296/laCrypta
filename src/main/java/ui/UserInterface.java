@@ -212,49 +212,29 @@ public class UserInterface {
         switch(choice) {
             case "A" -> {
                 sandwich.setMeat("Chicken");
-                addMeatPrice(sandwich);
                 System.out.println("✅ Selected Chicken");
             }
             case "B" -> {
                 sandwich.setMeat("Turkey");
-                addMeatPrice(sandwich);
                 System.out.println("✅ Selected Turkey");
             }
             case "C" -> {
                 sandwich.setMeat("Roast Beef");
-                addMeatPrice(sandwich);
                 System.out.println("✅ Selected Roast Beef");
             }
             case "D" -> {
                 sandwich.setMeat("Ham");
-                addMeatPrice(sandwich);
                 System.out.println("✅ Selected Ham");
             }
             case "E" -> {
                 sandwich.setMeat("Tuna");
-                addMeatPrice(sandwich);
                 System.out.println("✅ Selected Tuna");
             }
             case "0" -> {} // Back
         }
     }
 
-    private void addMeatPrice(Sandwich sandwich) {
-        Sandwich.SandwichSize size = sandwich.getSize();
-        if (size == null) {
-            System.out.println("⚠️ Please select size first!");
-            return;
-        }
 
-        double meatPrice = switch(size) {
-            case FOUR -> 1.00;
-            case EIGHT -> 2.00;
-            case TWELVE -> 3.00;
-        };
-
-        sandwich.addToPrice(meatPrice);
-        System.out.println("   (+$" + String.format("%.2f", meatPrice) + ")");
-    }
     //Cheese selection screen
     private void cheeseScreen(Sandwich sandwich) {
         System.out.println("""

@@ -16,6 +16,13 @@ public class Sandwich extends MenuItem {
         super("Custom Sandwich", 0, "");
         this.toppings = new ArrayList<>();
     }
+    public Sandwich(String name, SandwichSize size, String bread, boolean isToasted) {
+        super(name, size.getPrice(), "Signature Menu Item");
+        this.size = size;
+        this.bread = bread;
+        this.isToasted = isToasted;
+        this.toppings = new ArrayList<>();
+    }
     public void setBread(String bread) {
         this.bread = bread;
     }
@@ -62,8 +69,15 @@ public class Sandwich extends MenuItem {
 
     public void setMeat(String meat) {
         this.meat = meat;
+        if (this.size != null) {
+            double meatPrice = switch(this.size) {
+                case FOUR -> 1.00;
+                case EIGHT -> 2.00;
+                case TWELVE -> 3.00;
+            };
+            this.addToPrice(meatPrice);
+        }
     }
-
     public void setCheese(String cheese) {
         this.cheese = cheese;
     }
