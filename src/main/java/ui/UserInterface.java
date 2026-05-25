@@ -25,7 +25,7 @@ public class UserInterface {
               0) Exit - exit the application
               7) Admin
               """);
-            int choice = InputValidator.getValidIntegerInput(input,"Enter a valid choice and try again.",0,7);
+            int choice = InputValidator.getValidIntegerInput(input,"Enter a valid choice:",0,7);
             switch (choice) {
                 case 1 -> OrderScreen();
                 case 0 -> isRunning = false;
@@ -55,24 +55,23 @@ public class UserInterface {
             3) Add Chips
             4) Checkout
             0) Cancel Order""");
-            int choice =InputValidator.getValidIntegerInput(input,"Invalid Input!Please enter a valid number choice",0,11);
-            input.nextLine(); // Clear the buffer
+            int choice =InputValidator.getValidIntegerInput(input,"Enter a valid choice:",0,4);
             switch (choice) {
                 case 1 -> sandwichScreen();      // Sandwich customization
                 case 2 -> drinkScreen();           // Drink selection
                 case 3 -> chipsScreen();           // Chips selection
                 case 4 -> {
-                    // Instantiates the screen and capture its exit routing instruction
-                    checkoutScreen = new CheckOutScreen(currentOrder, orderRepository, input);
-                    String nextDestination = checkoutScreen.display();
-
-                    if (nextDestination.equals("HOME")) {
-                        // Break out of the active order menu loop entirely to return to the home screen
-                        isOrderScreen = false;
+                    if (currentOrder.getItems().isEmpty()) {
+                        System.out.println("\n❌ Your cart is empty! You must add at least a Sandwich, Drink, or Chips to check out.\n");
+                    } else {
+                        // Only allow user to check out if they have ordered something!
+                        checkoutScreen = new CheckOutScreen(currentOrder, orderRepository, input);
+                        String nextDestination = checkoutScreen.display();
+                        if (nextDestination.equals("HOME")) {
+                            isOrderScreen = false;
+                        }
                     }
-                    // If it returns "CONTINUE", this block is skipped, and the loop naturally loops back to the order choices!
                 }
-
                 case 0 ->{
                     handleOrderCancellation();
                     isOrderScreen=false;
@@ -101,7 +100,7 @@ public class UserInterface {
         10) Extra Toppings(Cheese,Meat)
         11) Sandwich Summary
         0) Back to Order Screen""");
-            int choice =InputValidator.getValidIntegerInput(input,"Invalid Input!Please enter a valid number choice",0,11);
+            int choice = InputValidator.getValidIntegerInput(input,"Enter a valid choice (0-11): ",0,11);
             switch (choice) {
                 case 1 -> breadScreen(sandwich);
                 case 2 -> sizeScreen(sandwich);
@@ -173,7 +172,7 @@ public class UserInterface {
     B) 8" - $8.99
     C) 12" - $10.99
     0) Back""");
-            String choice = InputValidator.getValidStringInput(input,"A,a,B,b,C,c,0");
+            String choice = InputValidator.getValidStringInput(input, "Enter a valid choice: ");
             switch(choice) {
                 case "A","a":
                     sandwich.setSize(Sandwich.SandwichSize.FOUR);
@@ -210,7 +209,6 @@ public class UserInterface {
     0) Back""");
 
         String choice = InputValidator.getValidCharChoice(input, "ABCDE0");
-
         switch(choice) {
             case "A" -> {
                 sandwich.setMeat("Chicken");
@@ -339,44 +337,16 @@ public class UserInterface {
     I) Mushrooms
     0) Done with toppings""");
     String choice = InputValidator.getValidCharChoice(input, "ABCDEFGHI0");
-
             switch(choice) {
-                case "A" -> {
-                    sandwich.addTopping(new Topping("Lettuce", 0, false));
-                    System.out.println("✅ Added Lettuce (Included)");
-                }
-                case "B" -> {
-                    sandwich.addTopping(new Topping("Peppers", 0, false));
-                    System.out.println("✅ Added Peppers (Included)");
-                }
-                case "C" -> {
-                    sandwich.addTopping(new Topping("Onions", 0, false));
-                    System.out.println("✅ Added Onions (Included)");
-                }
-                case "D" -> {
-                    sandwich.addTopping(new Topping("Tomatoes", 0, false));
-                    System.out.println("✅ Added Tomatoes (Included)");
-                }
-                case "E" -> {
-                    sandwich.addTopping(new Topping("Jalapeños", 0, false));
-                    System.out.println("✅ Added Jalapeños (Included)");
-                }
-                case "F" -> {
-                    sandwich.addTopping(new Topping("Cucumbers", 0, false));
-                    System.out.println("✅ Added Cucumbers (Included)");
-                }
-                case "G" -> {
-                    sandwich.addTopping(new Topping("Pickles", 0, false));
-                    System.out.println("✅ Added Pickles (Included)");
-                }
-                case "H" -> {
-                    sandwich.addTopping(new Topping("Guacamole", 0, false));
-                    System.out.println("✅ Added Guacamole (Included)");
-                }
-                case "I" -> {
-                    sandwich.addTopping(new Topping("Mushrooms", 0, false));
-                    System.out.println("✅ Added Mushrooms (Included)");
-                }
+                case "A" -> {sandwich.addTopping(new Topping("Lettuce", 0, false));System.out.println("✅ Added Lettuce (Included)");}
+                case "B" -> {sandwich.addTopping(new Topping("Peppers", 0, false));System.out.println("✅ Added Peppers (Included)");}
+                case "C" -> {sandwich.addTopping(new Topping("Onions", 0, false));System.out.println("✅ Added Onions (Included)");}
+                case "D" -> {sandwich.addTopping(new Topping("Tomatoes", 0, false));System.out.println("✅ Added Tomatoes (Included)");}
+                case "E" -> {sandwich.addTopping(new Topping("Jalapeños", 0, false));System.out.println("✅ Added Jalapeños (Included)");}
+                case "F" -> {sandwich.addTopping(new Topping("Cucumbers", 0, false));System.out.println("✅ Added Cucumbers (Included)");}
+                case "G" -> {sandwich.addTopping(new Topping("Pickles", 0, false));System.out.println("✅ Added Pickles (Included)");}
+                case "H" -> {sandwich.addTopping(new Topping("Guacamole", 0, false));System.out.println("✅ Added Guacamole (Included)");}
+                case "I" -> {sandwich.addTopping(new Topping("Mushrooms", 0, false));System.out.println("✅ Added Mushrooms (Included)");}
                 case "0" -> isSelectingToppings = false;
             }
         }
@@ -384,33 +354,30 @@ public class UserInterface {
     private void removeToppingScreen(Sandwich sandwich) {
         boolean isRemovingTopping = true;
         while (isRemovingTopping) {
-            System.out.println("""
-        Remove Topping:
-        """);
-
-            ArrayList<Topping> toppings = sandwich.getToppings();  // You need this getter
-
+            ArrayList<Topping> toppings = sandwich.getToppings();
             if (toppings.isEmpty()) {
-                System.out.println("No toppings to remove");
-                isRemovingTopping = false;
+                System.out.println("❌ No toppings on this sandwich to remove.");
+                return; // Instant clean break
             }
+            System.out.println("---Remove Topping:---");
 
             // Display toppings with numbers
-            for (int i = 0; i < toppings.size(); i++) {
-                Topping topping = toppings.get(i);
-                System.out.println((i + 1) + ") " + topping.name() +
+            int menuNumber = 1;
+            for (Topping topping : toppings) {
+                System.out.println(menuNumber + ") " + topping.name() +
                         " (-$" + String.format("%.2f", topping.price()) + ")");
+                menuNumber++;
             }
             System.out.println("0) Back");
 
-            int choice = InputValidator.getValidIntegerInput(input, "Enter choice: ", 0, toppings.size());
+            // Leveraged my structured list index checker tool
+            int targetIndex = InputValidator.getValidListIndex(input, toppings.size());
 
-            if (choice == 0) {
+            if (targetIndex == -1) {
                 isRemovingTopping = false;
             } else {
-                // No try-catch needed here anymore! My validator guarantees a safe index.
-                sandwich.removeTopping(choice - 1);
-                System.out.println("Topping removed");
+                sandwich.removeTopping(targetIndex);
+                System.out.println("✅ Topping removed.");
             }
         }
     }
@@ -420,11 +387,11 @@ public class UserInterface {
     A) Yes
     B) No""");
 
-        String choice = input.nextLine().toUpperCase();
+        String choice = InputValidator.getValidCharChoice(input, "AB");
         switch(choice) {
             case "A":
                 sandwich.setToasted(true);
-                System.out.println("Sandwich will be toasted");
+                System.out.println("Sandwich will be toasted 🔥");
                 break;
             case "B":
                 sandwich.setToasted(false);
@@ -439,16 +406,11 @@ public class UserInterface {
         while (isSelectingSauces) {
             System.out.println("""
         Select sauces (select multiple or 0 to finish):
-        A) Mayo
-        B) Mustard
-        C) Ketchup
-        D) Ranch
-        E) Thousand Islands
-        F) Vinaigrette
-        G) Remove sauce
-        0) Done with sauces""");
+                A) Mayo      B) Mustard          C) Ketchup
+                D) Ranch     E) Thousand Islands F) Vinaigrette
+                G) Remove sauce                  0) Done with sauces""");
 
-            String choice = input.nextLine().toUpperCase();
+            String choice = InputValidator.getValidCharChoice(input, "ABCDEFG0");
             switch(choice) {
                 case "A":
                     sandwich.addSauce("Mayo");
@@ -491,27 +453,22 @@ public class UserInterface {
             ArrayList<String> sauces = sandwich.getSauces();  // Need this getter
 
             if (sauces.isEmpty()) {
-                System.out.println("No sauces to remove");
-                isRemovingSauces = false;
+                System.out.println("❌ No sauces on this sandwich to remove.");
+                return; //STOP EXECUTION INSTANTLY and go back to the sub-menu
             }
             System.out.println("Remove Sauce:");
             for (int i = 0; i < sauces.size(); i++) {
                 System.out.println((i + 1) + ") " + sauces.get(i));
             }
             System.out.println("0) Back");
+            int targetIndex = InputValidator.getValidListIndex(input, sauces.size());
 
-            int choice = InputValidator.getValidIntegerInput(input, "Enter choice: ", 0, sauces.size());
-            input.nextLine();
-
-            if (choice == 0) {
-                isRemovingSauces = false;
-            } else if (choice > 0 && choice <= sauces.size()) {
-                String sauceToRemove = sauces.get(choice - 1);
-                sandwich.removeSauce(sauceToRemove);
-                System.out.println("Removed " + sauceToRemove);
+            if (targetIndex == -1) {
                 isRemovingSauces = false;
             } else {
-                System.out.println("Invalid choice");
+                String sauceToRemove = sauces.get(targetIndex);
+                sandwich.removeSauce(sauceToRemove);
+                System.out.println("Removed " + sauceToRemove);
             }
         }
     }
@@ -547,8 +504,6 @@ public class UserInterface {
                 case "0":
                     isSelectingExtra = false;
                     break;
-                default:
-                    System.out.println("Invalid choice");
             }
         }
     }
@@ -574,17 +529,14 @@ public class UserInterface {
             }
             System.out.println("0) Back");
 
-            int choice =InputValidator.getValidMenuChoice(input, 0, 3);
-            input.nextLine();
+            int targetIndex = InputValidator.getValidListIndex(input, extraToppings.size());
 
-            if (choice == 0) {
-                isRemovingExtra = false;
-            } else if (choice > 0 && choice <= extraToppings.size()) {
-                sandwich.removeExtraTopping(choice - 1);  // Call your method
-                System.out.println("Extra topping removed");
-                isRemovingExtra = false;
+            if (targetIndex == -1) {
+                isRemovingExtra = false; // User chose 0 to go back
             } else {
-                System.out.println("Invalid choice");
+                // targetIndex is already completely safe and 0-indexed!
+                sandwich.removeExtraTopping(targetIndex);
+                System.out.println("✅ Extra topping removed.");
             }
         }
     }
@@ -601,14 +553,10 @@ public class UserInterface {
         while(isDrinkScreen){
             System.out.println("""
         What kind of drink do you want?
-        A) Coca-Cola
-        B) Sprite
-        C) Orange Fanta
-        D) Iced Tea
-        E) Lemonade
-        F) Bottled Water
-        G) Coffee
-        H) Back to Order Screen""");
+            A) Coca-Cola        B) Sprite           C) Orange Fanta
+            D) Iced Tea         E) Lemonade         F) Bottled Water
+            G) Coffee
+            H) Back to Order Screen""");
 
             String choice = InputValidator.getValidCharChoice(input, "ABCDEFGH");
             Drink drink;
@@ -658,8 +606,6 @@ public class UserInterface {
                 case "H","h":
                     isDrinkScreen = false;
                     break;
-                default:
-                    System.out.println("Invalid choice");
             }
         }
     }

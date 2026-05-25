@@ -3,6 +3,7 @@ package ui;
 import data.OrderRepository;
 
 import model.*;
+import util.InputValidator;
 
 import java.io.IOException;
 
@@ -27,8 +28,8 @@ public class CheckOutScreen {
             System.out.println("3) Remove Item from Cart");
             System.out.println("0) Cancel Order");
 
-            int choice = input.nextInt();
-            input.nextLine();
+        int choice = InputValidator.getValidIntegerInput(input, "Enter choice: ", 0, 3);
+
 
             switch (choice) {
                 case 1 -> {
@@ -71,11 +72,12 @@ public class CheckOutScreen {
 
     private void displayItemsByCategory(ArrayList<MenuItem> items, String category) {
         // We use a regular integer now since a sequential stream loop doesn't require concurrency safety
+        //I'm passing by reference by using a pointer to be able to compile item as a mutable object which can't be done in streams
         java.util.concurrent.atomic.AtomicInteger counter = new java.util.concurrent.atomic.AtomicInteger(1);
 
-        // 1. Filter and process using forEach for good optimization
+        //Filter and process using forEach for good optimization
         items.stream()
-                .filter(item -> item.getCategory().equalsIgnoreCase(category)) // Uses your abstract getCategory() method seamlessly!
+                .filter(item -> item.getCategory().equalsIgnoreCase(category)) // Uses my abstract getCategory() method seamlessly!
                 .forEach(item -> {
                     // Print the item dynamically
                     System.out.println(" " + counter.getAndIncrement() + ") " + item.getName() + " - $" + String.format("%.2f", item.getPrice()));
@@ -87,9 +89,6 @@ public class CheckOutScreen {
                 });
 
         //If the counter never incremented, nothing matched this category
-        if (counter.get() == 1) {
-            System.out.println("  (None selected)");
-        }
     }
     private void removeItemFromCart() {
         ArrayList<MenuItem> items = currentOrder.getItems();
@@ -107,34 +106,26 @@ public class CheckOutScreen {
                     " - $" + String.format("%.2f", item.getPrice()));
         }
 
-        System.out.print("\n🗑️  Enter item number to remove (0 to cancel): ");
-        int choice = input.nextInt();
-        input.nextLine();
+        int targetIndex = InputValidator.getValidListIndex(input, items.size());
 
-        if (choice == 0) {
+        if (targetIndex == -1) {
             System.out.println("Removal cancelled.");
             return;
         }
 
-        if (choice > 0 && choice <= items.size()) {
-            // Store info before removing
-            MenuItem removedItem = items.get(choice - 1);
+        // targetIndex is guaranteed to be safe and already converted to a 0-based index!
+            MenuItem removedItem = items.get(targetIndex);
             String removedName = removedItem.getName();
             double removedPrice = removedItem.getPrice();
 
-            // Remove the item
-            currentOrder.removeItem(choice - 1);
+        // Remove the item using the safe index
+            currentOrder.removeItem(targetIndex);
 
-            // Show confirmation
+        // Show confirmation
             System.out.println("\n✅ ITEM REMOVED:");
-            System.out.println("   Removed: " + removedName + " (-$" +
-                    String.format("%.2f", removedPrice) + ")");
-            System.out.println("   New Cart Total: $" +
-                    String.format("%.2f", currentOrder.calculatePrice()));
+            System.out.println("   Removed: " + removedName + " (-$" + String.format("%.2f", removedPrice) + ")");
+            System.out.println("   New Cart Total: $" + String.format("%.2f", currentOrder.calculatePrice()));
             System.out.println("   Items Remaining: " + currentOrder.getItems().size() + "\n");
-        } else {
-            System.out.println("❌ Invalid item number.");
-        }
     }
     private void completeCheckout() {
         double total = currentOrder.calculatePrice();
