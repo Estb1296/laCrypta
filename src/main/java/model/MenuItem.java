@@ -24,12 +24,10 @@ public abstract class MenuItem implements Priceable{
     public double calculatePrice() {
         return price;
     }
-
     @Override
     public void addToPrice(double amount) {
         this.price += amount;
     }
-
     @Override
     public void subtractFromPrice(double amount) {
         this.price -= amount;

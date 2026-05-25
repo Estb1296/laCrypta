@@ -56,7 +56,7 @@ public class UserInterface {
             3) Add Chips
             4) Checkout
             0) Cancel Order""");
-            int choice = input.nextInt();
+            int choice =InputValidator.getValidIntegerInput(input,"Invalid Input!Please enter a valid number choice",0,11);
             input.nextLine(); // Clear the buffer
             switch (choice) {
                 case 1 -> sandwichScreen();      // Sandwich customization
@@ -74,14 +74,9 @@ public class UserInterface {
                     // If it returns "CONTINUE", this block is skipped, and the loop naturally loops back to the order choices!
                 }
 
-                case 0 -> {
-                    //Tell the repository to log that this specific monetary value was aborted
-                    if (!currentOrder.getItems().isEmpty()) {
-                        orderRepository.logCancelledOrder(currentOrder);
-                    }
-                    //Clear the cart locally
-                    currentOrder.clearCart();
-                    isOrderScreen = false;
+                case 0 ->{
+                    handleOrderCancellation();
+                    isOrderScreen=false;
                 }
                 default -> System.out.println("Invalid input.");
             }
@@ -107,7 +102,7 @@ public class UserInterface {
         10) Extra Toppings(Cheese,Meat)
         11) Sandwich Summary
         0) Back to Order Screen""");
-            int choice = input.nextInt();
+            int choice =InputValidator.getValidIntegerInput(input,"Invalid Input!Please enter a valid number choice",0,11);
             input.nextLine();//clears buffer
             switch (choice) {
                 case 1 -> breadScreen(sandwich);
@@ -180,7 +175,7 @@ public class UserInterface {
     B) 8" - $8.99
     C) 12" - $10.99
     0) Back""");
-            String choice = input.nextLine();
+            String choice = InputValidator.getValidStringInput(input,"A,a,B,b,C,c,0");
             switch(choice) {
                 case "A","a":
                     sandwich.setSize(Sandwich.SandwichSize.FOUR);
@@ -207,159 +202,184 @@ public class UserInterface {
         }
         }
     private void meatScreen(Sandwich sandwich) {
-        boolean isSelectingMeat = true;
-        while (isSelectingMeat) {
-            System.out.println("""
-        Select meat:
-        A) Chicken
-        B) Turkey
-        C) Roast Beef
-        D) Ham
-        E) Tuna
-        0) Back""");
+        System.out.println("""
+    Select meat (by sandwich size):
+    A) Chicken
+    B) Turkey
+    C) Roast Beef
+    D) Ham
+    E) Tuna
+    0) Back""");
 
-            String choice = input.nextLine();
-            switch(choice) {
-                case "A","a":
-                    sandwich.setMeat("Chicken");
-                    System.out.println("Selected Chicken");
-                    isSelectingMeat = false;
-                    break;
-                case "B","b":
-                    sandwich.setMeat("Turkey");
-                    System.out.println("Selected Turkey");
-                    isSelectingMeat = false;
-                    break;
-                case "C","c":
-                    sandwich.setMeat("Roast Beef");
-                    System.out.println("Selected Roast Beef");
-                    isSelectingMeat = false;
-                    break;
-                case "D","d":
-                    sandwich.setMeat("Ham");
-                    System.out.println("Selected Ham");
-                    isSelectingMeat = false;
-                    break;
-                case "E","e":
-                    sandwich.setMeat("Tuna");
-                    System.out.println("Selected Tuna");
-                    isSelectingMeat = false;
-                    break;
-                case "0":
-                    isSelectingMeat = false;
-                    break;
-                default:
-                    System.out.println("Invalid choice");
+        String choice = InputValidator.getValidCharChoice(input, "ABCDE0");
+
+        switch(choice) {
+            case "A" -> {
+                sandwich.setMeat("Chicken");
+                addMeatPrice(sandwich);
+                System.out.println("✅ Selected Chicken");
             }
+            case "B" -> {
+                sandwich.setMeat("Turkey");
+                addMeatPrice(sandwich);
+                System.out.println("✅ Selected Turkey");
+            }
+            case "C" -> {
+                sandwich.setMeat("Roast Beef");
+                addMeatPrice(sandwich);
+                System.out.println("✅ Selected Roast Beef");
+            }
+            case "D" -> {
+                sandwich.setMeat("Ham");
+                addMeatPrice(sandwich);
+                System.out.println("✅ Selected Ham");
+            }
+            case "E" -> {
+                sandwich.setMeat("Tuna");
+                addMeatPrice(sandwich);
+                System.out.println("✅ Selected Tuna");
+            }
+            case "0" -> {} // Back
         }
+    }
+
+    private void addMeatPrice(Sandwich sandwich) {
+        Sandwich.SandwichSize size = sandwich.getSize();
+        if (size == null) {
+            System.out.println("⚠️ Please select size first!");
+            return;
+        }
+
+        double meatPrice = switch(size) {
+            case FOUR -> 1.00;
+            case EIGHT -> 2.00;
+            case TWELVE -> 3.00;
+        };
+
+        sandwich.addToPrice(meatPrice);
+        System.out.println("   (+$" + String.format("%.2f", meatPrice) + ")");
     }
     //Cheese selection screen
     private void cheeseScreen(Sandwich sandwich) {
-        boolean isSelectingCheese = true;
-        while (isSelectingCheese) {
-            System.out.println("""
-        Select cheese:
-        A) Cheddar
-        B) Swiss
-        C) Provolone
-        D) American
-        E) Pepper Jack
-        F) No Cheese
-        0) Back""");
+        System.out.println("""
+    Select cheese (by sandwich size):
+    A) Cheddar
+    B) Swiss
+    C) Provolone
+    D) American
+    E) Pepper Jack
+    F) No Cheese
+    0) Back""");
 
-            String choice = input.nextLine();
-            switch(choice) {
-                case "A","a":
-                    sandwich.setCheese("Cheddar");
-                    System.out.println("Selected Cheddar");
-                    isSelectingCheese = false;
-                    break;
-                case "B","b":
-                    sandwich.setCheese("Swiss");
-                    System.out.println("Selected Swiss");
-                    isSelectingCheese = false;
-                    break;
-                case "C","c":
-                    sandwich.setCheese("Provolone");
-                    System.out.println("Selected Provolone");
-                    isSelectingCheese = false;
-                    break;
-                case "D","d":
-                    sandwich.setCheese("American");
-                    System.out.println("Selected American");
-                    isSelectingCheese = false;
-                    break;
-                case "E","e":
-                    sandwich.setCheese("Pepper Jack");
-                    System.out.println("Selected Pepper Jack");
-                    isSelectingCheese = false;
-                    break;
-                case "F","f":
-                    sandwich.setCheese("None");
-                    System.out.println("No cheese");
-                    isSelectingCheese = false;
-                    break;
-                case "0":
-                    isSelectingCheese = false;
-                    break;
-                default:
-                    System.out.println("Invalid choice");
+        String choice = InputValidator.getValidCharChoice(input, "ABCDEF0");
+
+        switch(choice) {
+            case "A" -> {
+                sandwich.setCheese("Cheddar");
+                addCheesePrice(sandwich);
+                System.out.println("✅ Selected Cheddar");
             }
+            case "B" -> {
+                sandwich.setCheese("Swiss");
+                addCheesePrice(sandwich);
+                System.out.println("✅ Selected Swiss");
+            }
+            case "C" -> {
+                sandwich.setCheese("Provolone");
+                addCheesePrice(sandwich);
+                System.out.println("✅ Selected Provolone");
+            }
+            case "D" -> {
+                sandwich.setCheese("American");
+                addCheesePrice(sandwich);
+                System.out.println("✅ Selected American");
+            }
+            case "E" -> {
+                sandwich.setCheese("Pepper Jack");
+                addCheesePrice(sandwich);
+                System.out.println("✅ Selected Pepper Jack");
+            }
+            case "F" -> {
+                sandwich.setCheese("None");
+                System.out.println("✅ No cheese selected");
+            }
+            case "0" -> {} // Back
         }
+    }
+
+    private void addCheesePrice(Sandwich sandwich) {
+        Sandwich.SandwichSize size = sandwich.getSize();
+        if (size == null) {
+            System.out.println("⚠️ Please select size first!");
+            return;
+        }
+
+        double cheesePrice = switch(size) {
+            case FOUR -> 0.75;
+            case EIGHT -> 1.50;
+            case TWELVE -> 2.25;
+        };
+
+        sandwich.addToPrice(cheesePrice);
+        System.out.println("   (+$" + String.format("%.2f", cheesePrice) + ")");
     }
     //Topping selection here
     private void toppingsScreen(Sandwich sandwich) {
         boolean isSelectingToppings = true;
         while (isSelectingToppings) {
             System.out.println("""
-    Select toppings (select multiple or 0 to finish):
-    Regular Toppings ($0.50 each):
+    Select toppings:
+    REGULAR TOPPINGS (Included):
     A) Lettuce
-    B) Tomato
-    C) Onion
-    D) Pickles
+    B) Peppers
+    C) Onions
+    D) Tomatoes
     E) Jalapeños
-    
-    Premium Toppings:
-    F) Bacon (+$1.50)
-    G) Cheese (+$1.00)
+    F) Cucumbers
+    G) Pickles
+    H) Guacamole
+    I) Mushrooms
     0) Done with toppings""");
+    String choice = InputValidator.getValidCharChoice(input, "ABCDEFGHI0");
 
-            String choice = input.nextLine();
             switch(choice) {
-                case "A","a":
-                    sandwich.addTopping(new Topping("Lettuce", 0.50, false));
-                    System.out.println("Added Lettuce (+$0.50)");
-                    break;
-                case "B","b":
-                    sandwich.addTopping(new Topping("Tomato", 0.50, false));
-                    System.out.println("Added Tomato (+$0.50)");
-                    break;
-                case "C","c":
-                    sandwich.addTopping(new Topping("Onion", 0.50, false));
-                    System.out.println("Added Onion (+$0.50)");
-                    break;
-                case "D","d":
-                    sandwich.addTopping(new Topping("Pickles", 0.50, false));
-                    System.out.println("Added Pickles (+$0.50)");
-                    break;
-                case "E","e":
-                    sandwich.addTopping(new Topping("Jalapeños", 0.50, false));
-                    System.out.println("Added Jalapeños (+$0.50)");
-                    break;
-                case "F","f":
-                    sandwich.addTopping(new Topping("Bacon", 1.50, true));
-                    System.out.println("Added Bacon (+$1.50)");
-                    break;
-                case "G","g":
-                    sandwich.addTopping(new Topping("Cheese", 1.00, true));
-                    System.out.println("Added Cheese (+$1.00)");
-                    break;
-                case "0":
-                    isSelectingToppings = false;
-                    break;
-                default:
-                    System.out.println("Invalid choice");
+                case "A" -> {
+                    sandwich.addTopping(new Topping("Lettuce", 0, false));
+                    System.out.println("✅ Added Lettuce (Included)");
+                }
+                case "B" -> {
+                    sandwich.addTopping(new Topping("Peppers", 0, false));
+                    System.out.println("✅ Added Peppers (Included)");
+                }
+                case "C" -> {
+                    sandwich.addTopping(new Topping("Onions", 0, false));
+                    System.out.println("✅ Added Onions (Included)");
+                }
+                case "D" -> {
+                    sandwich.addTopping(new Topping("Tomatoes", 0, false));
+                    System.out.println("✅ Added Tomatoes (Included)");
+                }
+                case "E" -> {
+                    sandwich.addTopping(new Topping("Jalapeños", 0, false));
+                    System.out.println("✅ Added Jalapeños (Included)");
+                }
+                case "F" -> {
+                    sandwich.addTopping(new Topping("Cucumbers", 0, false));
+                    System.out.println("✅ Added Cucumbers (Included)");
+                }
+                case "G" -> {
+                    sandwich.addTopping(new Topping("Pickles", 0, false));
+                    System.out.println("✅ Added Pickles (Included)");
+                }
+                case "H" -> {
+                    sandwich.addTopping(new Topping("Guacamole", 0, false));
+                    System.out.println("✅ Added Guacamole (Included)");
+                }
+                case "I" -> {
+                    sandwich.addTopping(new Topping("Mushrooms", 0, false));
+                    System.out.println("✅ Added Mushrooms (Included)");
+                }
+                case "0" -> isSelectingToppings = false;
             }
         }
     }
@@ -510,7 +530,7 @@ public class UserInterface {
         C) Remove Extra Topping
         0) Done with extras""");
 
-            String choice = input.nextLine().toUpperCase();
+            String choice = InputValidator.getValidCharChoice(input,"AB0");
             switch(choice) {
                 case "A":
                     ExtraTopping extraMeat = new ExtraTopping("Extra Meat",
@@ -719,6 +739,50 @@ public class UserInterface {
                 System.out.println("Added " + chips.getName() + " to cart!");
                 isChipsScreen = false; // Kick back to order screen after adding an item
             }
+        }
+    }
+    /**
+     * Handle order cancellation with confirmation warning
+     * Shows warning if cart has items, asks for confirmation
+     */
+    private void handleOrderCancellation() {
+        if (!currentOrder.getItems().isEmpty()) {
+            // User has items in cart - show warning
+            System.out.println("\n⚠️  WARNING: You have items in your cart!");
+            System.out.println("Items: " + currentOrder.getItems().size());
+            System.out.println("Total: $" + String.format("%.2f", currentOrder.calculatePrice()));
+
+            boolean confirmCancel = InputValidator.getConfirmation(input, "\nAre you sure you want to cancel this order?");
+
+            if (confirmCancel) {
+                try {
+                    // Attempting to log the cancellation in the repository
+                    orderRepository.logCancelledOrder(currentOrder);
+                    System.out.println("❌ Order cancelled.");
+
+                } catch (RuntimeException e) {
+                    /* * WHY RUNTIME EXCEPTION?
+                     * The repository method does not explicitly 'throw' a checked exception like IOException.
+                     * Instead, modern frameworks throw Unchecked (Runtime) exceptions when database/file
+                     * writes fail. Catching RuntimeException allows us to intercept these unexpected data
+                     * layer errors gracefully without causing a compiler error.
+                     */
+                    System.out.println("⚠️ Error saving cancellation log: " + e.getMessage());
+
+                } finally {
+                    /* * WHY A FINALLY BLOCK?
+                     * The finally block is guaranteed to run whether the try block succeeds OR the catch
+                     * block triggers. We put clearCart() here so the user's cart is ALWAYS safely emptied,
+                     * even if the background logging system crashes.
+                     */
+                    currentOrder.clearCart();
+                    System.out.println("🛒 Cart cleared.");
+                }
+            } else {
+                System.out.println("✅ Continuing with your order...");
+            }
+        } else {
+            System.out.println("Returned to home screen.");
         }
     }
     }
