@@ -67,27 +67,48 @@ public class Sandwich extends MenuItem {
         return size;
     }
 
-    public void setMeat(String meat) {
-        this.meat = meat;
-        if (this.size != null) {
-            double meatPrice = switch(this.size) {
+    public void setMeat(String newMeat) {
+        if (this.meat != null && !this.meat.equals("None")) {
+            double oldMeatPrice = switch (this.size) {
                 case FOUR -> 1.00;
                 case EIGHT -> 2.00;
                 case TWELVE -> 3.00;
             };
-            this.addToPrice(meatPrice);
+            this.subtractFromPrice(oldMeatPrice); // Subtract old premium charge
+        }
+        this.meat = newMeat;
+
+        if (newMeat != null && !newMeat.equalsIgnoreCase("None") && !newMeat.isEmpty()) {
+            double newMeatPrice = switch(this.size) {
+                case FOUR -> 1.00;
+                case EIGHT -> 2.00;
+                case TWELVE -> 3.00;
+            };
+            this.addToPrice(newMeatPrice);
         }
     }
-    public void setCheese(String cheese) {
-        this.cheese = cheese;
+    public void setCheese(String newCheese) {
+
+       if ( this.cheese != null&&!this.cheese.equals("None")){
         if(this.size!=null){
-            double cheesePrice=switch(this.size){
-                case FOUR -> 0.75;
-                case EIGHT -> 1.50;
-                case TWELVE -> 2.25;
+            double oldCheesePrice = switch (this.size) {
+                case FOUR -> 1.00;
+                case EIGHT -> 2.00;
+                case TWELVE -> 3.00;
             };
-            this.addToPrice(cheesePrice);
+            this.subtractFromPrice(oldCheesePrice);
+        }this.cheese = newCheese;
+        if (newCheese != null && !newCheese.equalsIgnoreCase("None") && !newCheese.isEmpty()) {
+            if (this.size != null) {
+            double newCheesePrice = switch(this.size) {
+                case FOUR -> 1.00;
+                case EIGHT -> 2.00;
+                case TWELVE -> 3.00;
+            };
+            this.addToPrice(newCheesePrice);
         }
+    }
+       }
     }
 
     public void addTopping(Topping topping) {

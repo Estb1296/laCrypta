@@ -52,11 +52,11 @@ public class UserInterface {
             System.out.println("""
             1) Add Sandwich
             2) Signature Sandwich
-            2) Add Drink
-            3) Add Chips
-            4) Checkout
+            3) Add Drink
+            4) Add Chips
+            5) Checkout
             0) Cancel Order""");
-            int choice =InputValidator.getValidIntegerInput(input,"Enter a valid choice:",0,4);
+            int choice =InputValidator.getValidIntegerInput(input,"Enter a valid choice:",0,5);
             switch (choice) {
                 case 1 -> sandwichScreen();      // Sandwich customization
                 case 2->  signatureSandwichScreen();
@@ -185,20 +185,22 @@ B) Philly Cheese Steak (8" White, Steak, American, Peppers, Mayo - Toasted)
 
             System.out.println("""
 Would you like to customize this sandwich?
-1) Add/Change Meat
-2) Add/Change Cheese
+1) Change Meat
+2) Change Cheese
 3) Add Regular Toppings
 4) Add Sauces
-5) Confirm and Add to Order
+5) Extra Meat/Cheese
+6) Confirm and Add to Order
 0) Cancel Item""");
 
-            int choice = InputValidator.getValidIntegerInput(input, "Pick an option:", 0,5);
+            int choice = InputValidator.getValidIntegerInput(input, "Pick an option:", 0,6);
             switch(choice) {
                 case 1 -> meatScreen(sandwich);     // Uses your existing meat screen!
                 case 2 -> cheeseScreen(sandwich);   // Uses your existing cheese screen!
                 case 3 -> toppingsScreen(sandwich);
                 case 4 -> saucesScreen(sandwich);
-                case 5 -> {
+                case 5->  extraMeatCheeseScreen(sandwich);
+                case 6 -> {
                     // Saves the sandwich to my Order cart list
                     currentOrder.addItem(sandwich);
                     System.out.println("🛒 Sandwich added to your order cart!");
@@ -260,6 +262,11 @@ Would you like to customize this sandwich?
         }
         }
     private void meatScreen(Sandwich sandwich) {
+        if (sandwich.getSize() == null) {
+            System.out.println("\n❌ Action Blocked: Pricing rules depend on sandwich size.");
+            System.out.println("👉 Please select your sandwich size (Option 2) first!");
+            return; // Exits the screen entirely and safely returns to your main menu
+        }
         System.out.println("""
     Select meat (by sandwich size):
     A) Chicken
@@ -298,6 +305,11 @@ Would you like to customize this sandwich?
 
     //Cheese selection screen
     private void cheeseScreen(Sandwich sandwich) {
+        if (sandwich.getSize() == null) {
+            System.out.println("\n❌ Action Blocked: Pricing rules depend on sandwich size.");
+            System.out.println("👉 Please select your sandwich size (Option 2) first!");
+            return; // Exits the screen entirely and safely returns to your main menu
+        }
         System.out.println("""
     Select cheese (by sandwich size):
     A) Cheddar
@@ -493,6 +505,11 @@ Would you like to customize this sandwich?
         }
     }
     private void extraMeatCheeseScreen(Sandwich sandwich) {
+        if (sandwich.getSize() == null) {
+            System.out.println("\n❌ Action Blocked: Premium extra costs scale by sandwich size.");
+            System.out.println("👉 Please select your sandwich size (Option 2) first!");
+            return; // Exits the screen entirely and safely returns to your main menu
+        }
         boolean isSelectingExtra = true;
         while (isSelectingExtra) {
             System.out.println("""

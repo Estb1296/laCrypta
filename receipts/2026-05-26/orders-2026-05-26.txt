@@ -1,0 +1,68 @@
+╔════════════════════════════════════╗
+║         SANDWICH SHOP RECEIPT       ║
+╚════════════════════════════════════╝
+
+Date & Time: 2026-05-26 07:40:28
+════════════════════════════════════
+
+ORDER DETAILS:
+────────────────────────────────────
+
+SANDWICHS:
+1) 8" White Sandwich (Toasted) - TOASTED - $12.50
+   Sandwich Specifications:
+  • Size: 8"
+  • Bread: White
+  • Meat: Chicken
+  • Cheese: American
+  • Toasted: Yes
+  • Regular Toppings: Peppers
+  • Premium Toppings: None
+  • Sauces: Mayo
+
+
+════════════════════════════════════
+SUBTOTAL: $12.50
+TAX (0%%): $0.00
+TOTAL: $12.50
+════════════════════════════════════
+
+Thank you for your order!
+Please come again soon!
+
+════════════════════════════════════════
+
+╔════════════════════════════════════╗
+║         SANDWICH SHOP RECEIPT       ║
+╚════════════════════════════════════╝
+
+Date & Time: 2026-05-26 08:45:44
+════════════════════════════════════
+
+ORDER DETAILS:
+────────────────────────────────────
+
+SANDWICHS:
+1) 8" White Sandwich (Toasted) - TOASTED - $9.00
+   Sandwich Specifications:
+  • Size: 8"
+  • Bread: White
+  • Meat: Steak
+  • Cheese: None
+  • Toasted: Yes
+  • Regular Toppings: Peppers
+  • Premium Toppings: None
+  • Sauces: Mayo
+
+
+════════════════════════════════════
+SUBTOTAL: $9.00
+TAX (0%%): $0.00
+TOTAL: $9.00
+════════════════════════════════════
+
+Thank you for your order!
+Please come again soon!
+
+════════════════════════════════════════
+
