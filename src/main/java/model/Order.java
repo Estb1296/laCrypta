@@ -42,7 +42,7 @@ public class Order extends MenuItem implements Priceable{
     public boolean isValidPromoCode(String userCode) {
     return userCode.equals("Craig26@");
     }
-    public void setDiscountAmount(double amount) {
+    public void setCouponDiscountAmount(double amount) {
         this.couponDiscount = amount;
     }
 

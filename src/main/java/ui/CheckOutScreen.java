@@ -30,7 +30,7 @@ public class CheckOutScreen {
             System.out.println("4) Apply Custom Dollar Coupon");
             System.out.println("0) Cancel Order");
 
-        int choice = InputValidator.getValidIntegerInput(input, "Enter choice: ", 0, 3);
+        int choice = InputValidator.getValidIntegerInput(input, "Enter choice: ", 0, 4);
 
 
             switch (choice) {
@@ -78,7 +78,7 @@ public class CheckOutScreen {
                             }
                         }
 
-                        currentOrder.setDiscountAmount(discountValue);
+                        currentOrder.setCouponDiscountAmount(discountValue);
 
                         // the flag so they can never enter this block again!
                         hasUsedPromo = true;

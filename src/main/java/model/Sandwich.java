@@ -23,6 +23,10 @@ public class Sandwich extends MenuItem {
         this.isToasted = isToasted;
         this.toppings = new ArrayList<>();
     }
+    public Sandwich(SandwichSize size, String bread, boolean isToasted) {
+        // This instantly forwards the data to your 4-parameter constructor above!
+        this("Signature Menu Item", size, bread, isToasted);
+    }
     public void setBread(String bread) {
         this.bread = bread;
     }
@@ -89,26 +93,31 @@ public class Sandwich extends MenuItem {
     }
     public void setCheese(String newCheese) {
 
-       if ( this.cheese != null&&!this.cheese.equals("None")){
-        if(this.size!=null){
-            double oldCheesePrice = switch (this.size) {
-                case FOUR -> 1.00;
-                case EIGHT -> 2.00;
-                case TWELVE -> 3.00;
-            };
-            this.subtractFromPrice(oldCheesePrice);
-        }this.cheese = newCheese;
+        if (this.cheese != null && !this.cheese.equals("None")) {
+            if (this.size != null) {
+                double oldCheesePrice = switch (this.size) {
+                    case FOUR -> 1.00;
+                    case EIGHT -> 2.00;
+                    case TWELVE -> 3.00;
+                };
+                this.subtractFromPrice(oldCheesePrice);
+            }
+        }
+
+
+        this.cheese = newCheese;
+
+
         if (newCheese != null && !newCheese.equalsIgnoreCase("None") && !newCheese.isEmpty()) {
             if (this.size != null) {
-            double newCheesePrice = switch(this.size) {
-                case FOUR -> 1.00;
-                case EIGHT -> 2.00;
-                case TWELVE -> 3.00;
-            };
-            this.addToPrice(newCheesePrice);
+                double newCheesePrice = switch(this.size) {
+                    case FOUR -> 1.00;
+                    case EIGHT -> 2.00;
+                    case TWELVE -> 3.00;
+                };
+                this.addToPrice(newCheesePrice);
+            }
         }
-    }
-       }
     }
 
     public void addTopping(Topping topping) {
