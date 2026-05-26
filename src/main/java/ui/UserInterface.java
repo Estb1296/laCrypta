@@ -213,7 +213,6 @@ public class UserInterface {
     private void addExtraMeatScreen(Sandwich sandwich) {
         ExtraTopping extraMeat = new ExtraTopping(
                 "Extra Meat",
-                getExtraToppingPrice(sandwich.getSize()),
                 sandwich.getSize().getExtraSize()
         );
         sandwich.addExtraTopping(extraMeat);
@@ -325,7 +324,6 @@ public class UserInterface {
     private void addExtraCheeseScreen(Sandwich sandwich) {
         ExtraTopping extraCheese = new ExtraTopping(
                 "Extra Cheese",
-                getExtraToppingPrice(sandwich.getSize()),
                 sandwich.getSize().getExtraSize()
         );
         sandwich.addExtraTopping(extraCheese);
@@ -453,15 +451,6 @@ public class UserInterface {
             case FOUR -> "+$1.00";
             case EIGHT -> "+$2.00";
             case TWELVE -> "+$3.00";
-        };
-    }
-
-    private double getExtraToppingPrice(Sandwich.SandwichSize size) {
-        if (size == null) return 0;
-        return switch (size) {
-            case FOUR -> 1.00;
-            case EIGHT -> 2.00;
-            case TWELVE -> 3.00;
         };
     }
     private void signatureSandwichScreen() {

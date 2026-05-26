@@ -3,6 +3,15 @@ package model;
 import java.util.ArrayList;
 
 public class Sandwich extends MenuItem {
+    //Static constants
+    private static final double MEAT_PREMIUM_FOUR = 1.00;
+    private static final double MEAT_PREMIUM_EIGHT = 2.00;
+    private static final double MEAT_PREMIUM_TWELVE = 3.00;
+
+    private static final double CHEESE_PREMIUM_FOUR = 1.00;
+    private static final double CHEESE_PREMIUM_EIGHT = 2.00;
+    private static final double CHEESE_PREMIUM_TWELVE = 3.00;
+
     private String bread;
     private SandwichSize size;
     private String meat;
@@ -13,33 +22,20 @@ public class Sandwich extends MenuItem {
     private final ArrayList<ExtraTopping> extraToppings = new ArrayList<>();
 
     public Sandwich() {
-        super("Custom Sandwich", 0, "");
+        super("Custom Sandwich", "");
         this.toppings = new ArrayList<>();
     }
+
     public Sandwich(String name, SandwichSize size, String bread, boolean isToasted) {
-        super(name, size.getPrice(), "Signature Menu Item");
+        super(name, "Signature Menu Item");
         this.size = size;
         this.bread = bread;
         this.isToasted = isToasted;
         this.toppings = new ArrayList<>();
     }
+
     public Sandwich(SandwichSize size, String bread, boolean isToasted) {
-        // This instantly forwards the data to your 4-parameter constructor above!
         this("Signature Menu Item", size, bread, isToasted);
-    }
-    public void setBread(String bread) {
-        this.bread = bread;
-    }
-    public String getBread(){
-        return bread;
-    }
-
-    public ArrayList<String> getSauces() {
-        return sauces;
-    }
-
-    public ArrayList<ExtraTopping> getExtraTopping() {
-        return extraToppings;
     }
 
     public enum SandwichSize {
@@ -57,123 +53,171 @@ public class Sandwich extends MenuItem {
             this.extraSize = extraSize;
         }
 
-        public String getDisplay() { return display; }
-        public double getPrice() { return price; }
-        public ExtraTopping.ExtraToppingSize getExtraSize() { return extraSize; }
+        public String getDisplay() {
+            return display;
+        }
+
+        public double getPrice() {
+            return price;
+        }
+
+        public ExtraTopping.ExtraToppingSize getExtraSize() {
+            return extraSize;
+        }
     }
 
+    // ====== Price Calculation (All Price Logic Here) ======
+    @Override
+    public double calculatePrice() {
+        double total = 0;
+
+        // Base price from size
+        if (size != null) {
+            total += size.getPrice();
+        }
+
+        // Meat premium
+        if (meat != null && !meat.equalsIgnoreCase("None")) {
+            total += getMeatPremium();
+        }
+
+        // Cheese premium
+        if (cheese != null && !cheese.equalsIgnoreCase("None")) {
+            total += getCheesePremium();
+        }
+
+        // Regular and premium toppings
+        for (Topping t : toppings) {
+            total += t.price();
+        }
+
+        // Extra toppings
+        for (ExtraTopping e : extraToppings) {
+            total += e.getPrice();
+        }
+
+        return total;
+    }
+
+    /**
+     * Helper: Get meat premium based on current size.
+     * Extracted to eliminate duplicate switch blocks.
+     */
+    private double getMeatPremium() {
+        return switch (this.size) {
+            case FOUR -> MEAT_PREMIUM_FOUR;
+            case EIGHT -> MEAT_PREMIUM_EIGHT;
+            case TWELVE -> MEAT_PREMIUM_TWELVE;
+        };
+    }
+
+    /**
+     * Helper: Get cheese premium based on current size.
+     * Extracted to eliminate duplicate switch blocks.
+     */
+    private double getCheesePremium() {
+        return switch (this.size) {
+            case FOUR -> CHEESE_PREMIUM_FOUR;
+            case EIGHT -> CHEESE_PREMIUM_EIGHT;
+            case TWELVE -> CHEESE_PREMIUM_TWELVE;
+        };
+    }
+
+    // ====== Setters (No Price Logic) ======
+    public void setBread(String bread) {
+        this.bread = bread;
+    }
 
     public void setSize(SandwichSize size) {
         this.size = size;
-        this.price = size.getPrice();  // Set base price
+        // No price mutation here — calculatePrice() handles it
     }
+
+    public void setMeat(String newMeat) {
+        this.meat = newMeat;
+        // No price mutation here — calculatePrice() handles it
+    }
+
+    public void setCheese(String newCheese) {
+        this.cheese = newCheese;
+        // No price mutation here — calculatePrice() handles it
+    }
+
+    public void setToasted(boolean toasted) {
+        this.isToasted = toasted;
+    }
+
+    // ====== Getters ======
+    public String getBread() {
+        return bread;
+    }
+
     public SandwichSize getSize() {
         return size;
     }
 
-    public void setMeat(String newMeat) {
-        if (this.meat != null && !this.meat.equals("None")) {
-            double oldMeatPrice = switch (this.size) {
-                case FOUR -> 1.00;
-                case EIGHT -> 2.00;
-                case TWELVE -> 3.00;
-            };
-            this.subtractFromPrice(oldMeatPrice); // Subtract old premium charge
-        }
-        this.meat = newMeat;
-
-        if (newMeat != null && !newMeat.equalsIgnoreCase("None") && !newMeat.isEmpty()) {
-            double newMeatPrice = switch(this.size) {
-                case FOUR -> 1.00;
-                case EIGHT -> 2.00;
-                case TWELVE -> 3.00;
-            };
-            this.addToPrice(newMeatPrice);
-        }
-    }
-    public void setCheese(String newCheese) {
-
-        if (this.cheese != null && !this.cheese.equals("None")) {
-            if (this.size != null) {
-                double oldCheesePrice = switch (this.size) {
-                    case FOUR -> 1.00;
-                    case EIGHT -> 2.00;
-                    case TWELVE -> 3.00;
-                };
-                this.subtractFromPrice(oldCheesePrice);
-            }
-        }
-
-
-        this.cheese = newCheese;
-
-
-        if (newCheese != null && !newCheese.equalsIgnoreCase("None") && !newCheese.isEmpty()) {
-            if (this.size != null) {
-                double newCheesePrice = switch(this.size) {
-                    case FOUR -> 1.00;
-                    case EIGHT -> 2.00;
-                    case TWELVE -> 3.00;
-                };
-                this.addToPrice(newCheesePrice);
-            }
-        }
-    }
-
-    // ADD THESE TWO NEW METHODS:
     public String getMeat() {
-        return this.meat;
+        return meat;
     }
 
     public String getCheese() {
-        return this.cheese;
-    }
-
-
-    public void addTopping(Topping topping) {
-        this.toppings.add(topping);
-        this.addToPrice(topping.price());  // Interface method
-    }
-
-    public void removeTopping(int index) {
-        if (index >= 0 && index < toppings.size()) {
-            this.subtractFromPrice(toppings.get(index).price());
-            toppings.remove(index);
-        }
-    }
-    public ArrayList<Topping> getToppings() {
-        return toppings;
-    }
-    public void setToasted(boolean toasted) {
-        this.isToasted = toasted;
+        return cheese;
     }
 
     public boolean isToasted() {
         return isToasted;
     }
+
+    public ArrayList<Topping> getToppings() {
+        return toppings;
+    }
+
+    public ArrayList<String> getSauces() {
+        return sauces;
+    }
+
+    public ArrayList<ExtraTopping> getExtraTopping() {
+        return extraToppings;
+    }
+
+    // ====== Topping Management (No Price Logic) ======
+    public void addTopping(Topping topping) {
+        toppings.add(topping);
+        // No price mutation here — calculatePrice() handles it
+    }
+
+    public void removeTopping(int index) {
+        if (index >= 0 && index < toppings.size()) {
+            toppings.remove(index);
+            // No price mutation here — calculatePrice() handles it
+        }
+    }
+
+    // ====== Sauce Management ======
     public void addSauce(String sauce) {
         if (!sauces.contains(sauce)) {
             sauces.add(sauce);
         }
     }
+
     public void removeSauce(String sauce) {
         sauces.remove(sauce);
     }
+
+    // ====== Extra Topping Management (No Price Logic) ======
     public void addExtraTopping(ExtraTopping extra) {
         extraToppings.add(extra);
-        this.addToPrice(extra.getPrice());
+        // No price mutation here — calculatePrice() handles it
     }
 
     public void removeExtraTopping(int index) {
         if (index >= 0 && index < extraToppings.size()) {
-            this.subtractFromPrice(extraToppings.get(index).getPrice());
             extraToppings.remove(index);
+            // No price mutation here — calculatePrice() handles it
         }
     }
-    @Override
-    public double calculatePrice() {
-        return this.price;  // Return current price
-    }
+
+    // ====== Display Methods ======
     @Override
     public String getName() {
         if (size != null && bread != null) {
@@ -181,11 +225,7 @@ public class Sandwich extends MenuItem {
         }
         return "Custom Sandwich";
     }
-    // public methods return private fields to the user without giving access
-    @Override
-    public double getPrice() {
-        return this.price;  // Return current price
-    }
+
     @Override
     public String getDescription() {
         StringBuilder sb = new StringBuilder();
@@ -196,7 +236,7 @@ public class Sandwich extends MenuItem {
         sb.append("  • Cheese: ").append(cheese != null ? cheese : "None").append("\n");
         sb.append("  • Toasted: ").append(isToasted() ? "Yes" : "No").append("\n");
 
-        // Separate regular and premium
+        // Separate regular and premium toppings
         ArrayList<String> regularNames = new ArrayList<>();
         ArrayList<String> premiumNames = new ArrayList<>();
 
@@ -226,6 +266,7 @@ public class Sandwich extends MenuItem {
         String toastStatus = isToasted() ? " - TOASTED" : "";
         return getName() + toastStatus + " - $" + String.format("%.2f", getPrice());
     }
+
     @Override
     public String getCategory() {
         return "Sandwich";

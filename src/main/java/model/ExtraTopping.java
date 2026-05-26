@@ -1,24 +1,12 @@
 package model;
 
 public class ExtraTopping extends MenuItem {
-    private String name;
-    private double price;
-    private ExtraToppingSize size;
-
-    public ExtraTopping(String name, double price, ExtraToppingSize size) {
-        super(name, price, "Extra Topping");
-        this.name = name;
-        this.price = price;
-        this.size = size;
-    }
+    private final ExtraToppingSize size;
 
     public ExtraTopping(String name, ExtraToppingSize size) {
-        super(name, size.getPrice(), "Extra Topping");
-        this.name = name;
+        super(name, "Extra Topping");
         this.size = size;
-        this.price = size.getPrice();
     }
-
     public enum ExtraToppingSize {
         FOUR(0.50),
         EIGHT(1.00),
@@ -34,12 +22,10 @@ public class ExtraTopping extends MenuItem {
             return price;
         }
     }
-    public String getName() {
-        return name;
-    }
-
-    public double getPrice() {
-        return price;
+    @Override
+    public double calculatePrice() {
+        if (size == null) return 0.0;
+        return size.getPrice();
     }
 
     public ExtraToppingSize getSize() {

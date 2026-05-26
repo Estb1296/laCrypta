@@ -9,7 +9,7 @@ public class Order extends MenuItem implements Priceable{
     private double couponDiscount = 0.0;
 
     public Order() {
-        super("Order", 0, "Customer Order");
+        super("Order", "Customer Order");
         items = new ArrayList<>();
         total = 0.0;
     }

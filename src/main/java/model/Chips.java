@@ -1,14 +1,20 @@
 package model;
 
 public class Chips extends MenuItem {
+    private final double price;
     public Chips(String name, double price, String description) {
-        super(name, price, description);
+        super(name, description);
+        this.price = price;
     }
-
+    @Override
+    public double calculatePrice() {
+        return price;
+    }
     @Override
     public String getDescription() {
         return "Chips: " + getName() + " ($" + String.format("%.2f", getPrice()) + ")";
     }
+
 
     @Override
     public String toReceiptLine() {
@@ -18,11 +24,6 @@ public class Chips extends MenuItem {
     @Override
     public String getCategory() {
         return "Chips";
-    }
-
-    @Override
-    public double getPrice() {
-        return price; // Asks the parent class for the price we sent up
     }
 }
 

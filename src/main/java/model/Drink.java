@@ -1,23 +1,35 @@
 package model;
 public class Drink extends MenuItem {
-        private String size; // Tracks "Small", "Medium", "Large"
+    private static final double PRICE_SMALL = 1.99;
+    private static final double PRICE_MEDIUM = 2.50;
+    private static final double PRICE_LARGE = 3.00;
+    private String size; // Tracks "Small", "Medium", "Large"
+
 
     public Drink(String name) {
-        super(name, 2.50, "Drink");
+        super(name, "Drink");
+    }
+    @Override
+    public double calculatePrice() {
+        if (size == null) return 0.0;
+
+        return switch (size) {
+            case "Small" -> PRICE_SMALL;
+            case "Medium" -> PRICE_MEDIUM;
+            case "Large" -> PRICE_LARGE;
+            default -> 0.0;
+        };
     }
 
-    @Override
-    public String getDescription() {
-        return "Drink: " + getName();
-    }
 
     public void setSize(String size) {
-            this.size = size;
-        }
+        this.size = size;
+    }
 
-        public String getSize() {
-            return size;
-        }
+    public String getSize() {
+        return size;
+    }
+
         // Pulls pricing matrix out of variables and computes on demand
         @Override
         public double getPrice() {
@@ -38,8 +50,12 @@ public class Drink extends MenuItem {
         }
         return this.size + " " + baseName; // Returns "Medium Coca-Cola"
     }
+    @Override
+    public String getDescription() {
+        return "Drink: " + getName();
+    }// Generates fresh description strings whenever checked out
 
-        // Generates fresh description strings whenever checked out
+
 
     @Override
     public String toReceiptLine() {
