@@ -80,6 +80,14 @@ public class Sandwich extends MenuItem {
     }
     public void setCheese(String cheese) {
         this.cheese = cheese;
+        if(this.size!=null){
+            double cheesePrice=switch(this.size){
+                case FOUR -> 0.75;
+                case EIGHT -> 1.50;
+                case TWELVE -> 2.25;
+            };
+            this.addToPrice(cheesePrice);
+        }
     }
 
     public void addTopping(Topping topping) {

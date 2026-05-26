@@ -51,6 +51,7 @@ public class UserInterface {
         while (isOrderScreen) {
             System.out.println("""
             1) Add Sandwich
+            2) Signature Sandwich
             2) Add Drink
             3) Add Chips
             4) Checkout
@@ -58,9 +59,10 @@ public class UserInterface {
             int choice =InputValidator.getValidIntegerInput(input,"Enter a valid choice:",0,4);
             switch (choice) {
                 case 1 -> sandwichScreen();      // Sandwich customization
-                case 2 -> drinkScreen();           // Drink selection
-                case 3 -> chipsScreen();           // Chips selection
-                case 4 -> {
+                case 2->  signatureSandwichScreen();
+                case 3 -> drinkScreen();           // Drink selection
+                case 4 -> chipsScreen();           // Chips selection
+                case 5 -> {
                     if (currentOrder.getItems().isEmpty()) {
                         System.out.println("\n❌ Your cart is empty! You must add at least a Sandwich, Drink, or Chips to check out.\n");
                     } else {
@@ -146,7 +148,66 @@ public class UserInterface {
             }
         }
     }
+    private void signatureSandwichScreen() {
+        System.out.println("""
+Select a Signature Sandwich:
+A) Classic BLT (8" White, Bacon, Cheddar, Veggies, Ranch - Toasted)
+B) Philly Cheese Steak (8" White, Steak, American, Peppers, Mayo - Toasted)
+0) Cancel""");
 
+        String choice = InputValidator.getValidCharChoice(input, "AB0");
+        Sandwich signatureSandwich = null;
+
+        switch(choice) {
+            case "A" -> {
+                signatureSandwich = new BLT();
+                System.out.println("✅ Added BLT to your workspace!");
+            }
+            case "B" -> {
+                signatureSandwich = new PhillyCheeseSteak();
+                System.out.println("✅ Added Philly Cheese Steak to your workspace!");
+            }
+            case "0" -> {
+                return; // Go back to the order menu
+            }
+        }
+
+        // Now, send this signature sandwich to the modification screen!
+        handleSandwichCustomization(signatureSandwich);
+    }
+    private void handleSandwichCustomization(Sandwich sandwich) {
+        boolean customizing = true;
+        while (customizing) {
+            System.out.println("\n--- Current Sandwich State ---");
+            System.out.println(sandwich.getDescription());
+            System.out.println("Current Price: $" + String.format("%.2f", sandwich.getPrice()));
+            System.out.println("------------------------------");
+
+            System.out.println("""
+Would you like to customize this sandwich?
+1) Add/Change Meat
+2) Add/Change Cheese
+3) Add Regular Toppings
+4) Add Sauces
+5) Confirm and Add to Order
+0) Cancel Item""");
+
+            int choice = InputValidator.getValidIntegerInput(input, "Pick an option:", 0,5);
+            switch(choice) {
+                case 1 -> meatScreen(sandwich);     // Uses your existing meat screen!
+                case 2 -> cheeseScreen(sandwich);   // Uses your existing cheese screen!
+                case 3 -> toppingsScreen(sandwich);
+                case 4 -> saucesScreen(sandwich);
+                case 5 -> {
+                    // Saves the sandwich to my Order cart list
+                    currentOrder.addItem(sandwich);
+                    System.out.println("🛒 Sandwich added to your order cart!");
+                    customizing = false;
+                }
+                case 0 -> customizing = false;
+            }
+        }
+    }
     private void breadScreen(Sandwich sandwich) {
         System.out.println("""
     A) White Bread
@@ -252,27 +313,22 @@ public class UserInterface {
         switch(choice) {
             case "A" -> {
                 sandwich.setCheese("Cheddar");
-                addCheesePrice(sandwich);
                 System.out.println("✅ Selected Cheddar");
             }
             case "B" -> {
                 sandwich.setCheese("Swiss");
-                addCheesePrice(sandwich);
                 System.out.println("✅ Selected Swiss");
             }
             case "C" -> {
                 sandwich.setCheese("Provolone");
-                addCheesePrice(sandwich);
                 System.out.println("✅ Selected Provolone");
             }
             case "D" -> {
                 sandwich.setCheese("American");
-                addCheesePrice(sandwich);
                 System.out.println("✅ Selected American");
             }
             case "E" -> {
                 sandwich.setCheese("Pepper Jack");
-                addCheesePrice(sandwich);
                 System.out.println("✅ Selected Pepper Jack");
             }
             case "F" -> {
@@ -283,22 +339,6 @@ public class UserInterface {
         }
     }
 
-    private void addCheesePrice(Sandwich sandwich) {
-        Sandwich.SandwichSize size = sandwich.getSize();
-        if (size == null) {
-            System.out.println("⚠️ Please select size first!");
-            return;
-        }
-
-        double cheesePrice = switch(size) {
-            case FOUR -> 0.75;
-            case EIGHT -> 1.50;
-            case TWELVE -> 2.25;
-        };
-
-        sandwich.addToPrice(cheesePrice);
-        System.out.println("   (+$" + String.format("%.2f", cheesePrice) + ")");
-    }
     //Topping selection here
     private void toppingsScreen(Sandwich sandwich) {
         boolean isSelectingToppings = true;
