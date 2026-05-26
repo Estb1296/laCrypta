@@ -120,6 +120,16 @@ public class Sandwich extends MenuItem {
         }
     }
 
+    // ADD THESE TWO NEW METHODS:
+    public String getMeat() {
+        return this.meat;
+    }
+
+    public String getCheese() {
+        return this.cheese;
+    }
+
+
     public void addTopping(Topping topping) {
         this.toppings.add(topping);
         this.addToPrice(topping.price());  // Interface method

@@ -3,7 +3,7 @@ package ui;
 import data.OrderRepository;
 
 import model.*;
-import util.InputValidator;
+import ui.util.InputValidator;
 
 import java.io.IOException;
 
@@ -130,8 +130,8 @@ public class CheckOutScreen {
                     System.out.println(" " + counter.getAndIncrement() + ") " + item.getName() + " - $" + String.format("%.2f", item.getPrice()));
 
                     // Use Java Pattern Matching to cleanly
-                    if (item instanceof Sandwich sandwichObj) {
-                        System.out.println(sandwichObj.getDescription());
+                    if (item instanceof Sandwich sandwich) {
+                        System.out.println(sandwich.getDescription());
                     }
                 });
 
