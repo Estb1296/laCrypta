@@ -1,6 +1,6 @@
 package model;
 public class Drink extends MenuItem {
-    private static final double PRICE_SMALL = 1.99;
+    private static final double PRICE_SMALL = 2.00;
     private static final double PRICE_MEDIUM = 2.50;
     private static final double PRICE_LARGE = 3.00;
     private String size; // Tracks "Small", "Medium", "Large"
@@ -59,7 +59,7 @@ public class Drink extends MenuItem {
 
     @Override
     public String toReceiptLine() {
-        return String.format("%s (%s) - $%.2f", getName(), this.size, calculatePrice());
+        return getName() + " - " + getFormattedPrice();
     }
 
     @Override

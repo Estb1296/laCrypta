@@ -3,7 +3,7 @@ package model;
 public class ExtraTopping extends MenuItem {
     private final ExtraToppingSize size;
 
-    public ExtraTopping(String name, ExtraToppingSize size) {
+    public ExtraTopping(String name, boolean isCheese, ExtraToppingSize size) {
         super(name, "Extra Topping");
         this.size = size;
     }

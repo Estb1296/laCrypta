@@ -18,7 +18,7 @@ public class Chips extends MenuItem {
 
     @Override
     public String toReceiptLine() {
-        return String.format("%-25s $%6.2f", getName(), getPrice());
+        return getName() + " - " + getFormattedPrice();
     }
 
     @Override

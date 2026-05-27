@@ -2,7 +2,7 @@ package model;
 
 public class PhillyCheeseSteak extends Sandwich{
     public PhillyCheeseSteak(){
-        super("BLT", Sandwich.SandwichSize.EIGHT, "White", true);
+        super("Philly Cheese Steak", Sandwich.SandwichSize.EIGHT, "White", true);
         this.setMeat("Steak");
         this.setCheese("American");
         this.addSauce("Mayo");

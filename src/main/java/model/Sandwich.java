@@ -1,6 +1,8 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Sandwich extends MenuItem {
     //Static constants
@@ -22,18 +24,17 @@ public class Sandwich extends MenuItem {
     private final ArrayList<ExtraTopping> extraToppings = new ArrayList<>();
 
     public Sandwich() {
-        super("Custom Sandwich", "");
+        super("Custom Sandwich", "Dynamic Specs");
         this.toppings = new ArrayList<>();
     }
 
     public Sandwich(String name, SandwichSize size, String bread, boolean isToasted) {
-        super(name, "Signature Menu Item");
+        super(name, "Dynamic Specs");
         this.size = size;
         this.bread = bread;
         this.isToasted = isToasted;
         this.toppings = new ArrayList<>();
     }
-
     public Sandwich(SandwichSize size, String bread, boolean isToasted) {
         this("Signature Menu Item", size, bread, isToasted);
     }
@@ -57,13 +58,15 @@ public class Sandwich extends MenuItem {
             return display;
         }
 
-        public double getPrice() {
-            return price;
-        }
 
         public ExtraTopping.ExtraToppingSize getExtraSize() {
             return extraSize;
         }
+
+        public double getPrice() {
+            return price;
+        }
+
     }
 
     // ====== Price Calculation (All Price Logic Here) ======
@@ -104,6 +107,7 @@ public class Sandwich extends MenuItem {
      * Extracted to eliminate duplicate switch blocks.
      */
     private double getMeatPremium() {
+        if (this.size == null) return 0.0; // Guard clause against null pointer exception
         return switch (this.size) {
             case FOUR -> MEAT_PREMIUM_FOUR;
             case EIGHT -> MEAT_PREMIUM_EIGHT;
@@ -116,6 +120,7 @@ public class Sandwich extends MenuItem {
      * Extracted to eliminate duplicate switch blocks.
      */
     private double getCheesePremium() {
+        if (this.size == null) return 0.0;
         return switch (this.size) {
             case FOUR -> CHEESE_PREMIUM_FOUR;
             case EIGHT -> CHEESE_PREMIUM_EIGHT;
@@ -168,16 +173,16 @@ public class Sandwich extends MenuItem {
         return isToasted;
     }
 
-    public ArrayList<Topping> getToppings() {
-        return toppings;
+    public List<Topping> getToppings() {
+        return Collections.unmodifiableList(toppings);
     }
 
-    public ArrayList<String> getSauces() {
-        return sauces;
+    public List<ExtraTopping> getExtraTopping() {
+        return Collections.unmodifiableList(extraToppings);
     }
 
-    public ArrayList<ExtraTopping> getExtraTopping() {
-        return extraToppings;
+    public List<String> getSauces() {
+        return Collections.unmodifiableList(sauces);
     }
 
     // ====== Topping Management (No Price Logic) ======
@@ -191,6 +196,26 @@ public class Sandwich extends MenuItem {
             toppings.remove(index);
             // No price mutation here — calculatePrice() handles it
         }
+    }
+    /**
+     * NEW UTILITY: Toggles a topping by name.
+     * If it's already on the signature template, it removes it.
+     * If it's missing, it adds it.
+     */
+    public void toggleTopping(Topping topping) {
+        // Looks through your toppings list to see if a topping with this name already exists
+        boolean removed = this.toppings.removeIf(t -> t.name().equalsIgnoreCase(topping.name()));
+
+        if (removed) {
+            System.out.println("❌ Removed: " + topping.name() + " from template.");
+        } else {
+            this.toppings.add(topping);
+            System.out.println("➕ Added: " + topping.name() + " to template.");
+        }
+    }
+    // Clear all sauces so the user can rewrite them from scratch
+    public void clearSauces(){
+        this.sauces.clear();
     }
 
     // ====== Sauce Management ======
@@ -264,7 +289,7 @@ public class Sandwich extends MenuItem {
     @Override
     public String toReceiptLine() {
         String toastStatus = isToasted() ? " - TOASTED" : "";
-        return getName() + toastStatus + " - $" + String.format("%.2f", getPrice());
+        return getName() + toastStatus + " - " + getFormattedPrice();
     }
 
     @Override

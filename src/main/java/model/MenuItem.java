@@ -8,7 +8,9 @@ public abstract class MenuItem implements Priceable{
         this.name = name;
         this.description = description;
     }
-
+    public String getFormattedPrice() {
+        return String.format("$%.2f", getPrice());
+    }
     public String getName() {
         return name;
     }

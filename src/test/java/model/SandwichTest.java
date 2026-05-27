@@ -3,7 +3,7 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -369,7 +369,7 @@ class SandwichTest {
     @Test
     void getToppings_NoToppingsAdded_ReturnsEmptyList() {
         // arrange & act
-        ArrayList<Topping> toppings = sandwich.getToppings();
+        List<Topping> toppings = sandwich.getToppings();
 
         // assert
         assertNotNull(toppings);
@@ -385,7 +385,7 @@ class SandwichTest {
         sandwich.addTopping(topping2);
 
         // act
-        ArrayList<Topping> toppings = sandwich.getToppings();
+        List<Topping> toppings = sandwich.getToppings();
 
         // assert
         assertEquals(2, toppings.size());
@@ -497,7 +497,7 @@ class SandwichTest {
     @Test
     void getSauces_NoSaucesAdded_ReturnsEmptyList() {
         // arrange & act
-        ArrayList<String> sauces = sandwich.getSauces();
+        List<String> sauces = sandwich.getSauces();
 
         // assert
         assertNotNull(sauces);
@@ -511,7 +511,7 @@ class SandwichTest {
         sandwich.addSauce("Mustard");
 
         // act
-        ArrayList<String> sauces = sandwich.getSauces();
+        List<String> sauces = sandwich.getSauces();
 
         // assert
         assertEquals(2, sauces.size());
@@ -523,7 +523,7 @@ class SandwichTest {
     void addExtraTopping_ValidExtraTopping_ExtraToppingAdded() {
         // arrange
         sandwich.setSize(Sandwich.SandwichSize.EIGHT);
-        ExtraTopping extraTopping = new ExtraTopping("Extra Meat",  ExtraTopping.ExtraToppingSize.TWELVE);
+        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", isCheese, ExtraTopping.ExtraToppingSize.TWELVE);
         double basePriceBeforeExtra = sandwich.getPrice();
 
         // act
@@ -539,8 +539,8 @@ class SandwichTest {
     void addExtraTopping_MultipleExtraToppings_AllAdded() {
         // arrange
         sandwich.setSize(Sandwich.SandwichSize.TWELVE);
-        ExtraTopping extra1 = new ExtraTopping("Extra Meat", ExtraTopping.ExtraToppingSize.TWELVE);
-        ExtraTopping extra2 = new ExtraTopping("Extra Cheese", ExtraTopping.ExtraToppingSize.TWELVE);
+        ExtraTopping extra1 = new ExtraTopping("Extra Meat", isCheese, ExtraTopping.ExtraToppingSize.TWELVE);
+        ExtraTopping extra2 = new ExtraTopping("Extra Cheese", isCheese, ExtraTopping.ExtraToppingSize.TWELVE);
 
         // act
         sandwich.addExtraTopping(extra1);
@@ -556,7 +556,7 @@ class SandwichTest {
         sandwich.setSize(Sandwich.SandwichSize.TWELVE);
         double basePrice = sandwich.getPrice(); // Capture base price before adding anything
 
-        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", ExtraTopping.ExtraToppingSize.TWELVE);
+        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", isCheese, ExtraTopping.ExtraToppingSize.TWELVE);
         sandwich.addExtraTopping(extraTopping);
 
         // act
@@ -570,7 +570,7 @@ class SandwichTest {
     void removeExtraTopping_ValidIndex_ToppingRemovedAndPriceReverted() {
         // arrange
         sandwich.setSize(Sandwich.SandwichSize.TWELVE);
-        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", ExtraTopping.ExtraToppingSize.TWELVE);
+        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", isCheese, ExtraTopping.ExtraToppingSize.TWELVE);
         sandwich.addExtraTopping(extraTopping);
 
         // Dynamically get the price of the topping instead of hardcoding 2.00
@@ -589,7 +589,7 @@ class SandwichTest {
     void removeExtraTopping_InvalidIndex_NoExceptionThrown() {
         // arrange
         sandwich.setSize(Sandwich.SandwichSize.TWELVE);
-        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", ExtraTopping.ExtraToppingSize.TWELVE);
+        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", isCheese, ExtraTopping.ExtraToppingSize.TWELVE);
         sandwich.addExtraTopping(extraTopping);
 
         // act & assert
@@ -600,7 +600,7 @@ class SandwichTest {
     @Test
     void getExtraTopping_NoExtraToppingsAdded_ReturnsEmptyList() {
         // arrange & act
-        ArrayList<ExtraTopping> extraToppings = sandwich.getExtraTopping();
+        List<ExtraTopping> extraToppings = sandwich.getExtraTopping();
 
         // assert
         assertNotNull(extraToppings);
@@ -611,11 +611,11 @@ class SandwichTest {
     void getExtraTopping_ExtraToppingsAdded_ReturnsExtraToppings() {
         // arrange
         sandwich.setSize(Sandwich.SandwichSize.TWELVE);
-        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", ExtraTopping.ExtraToppingSize.TWELVE);
+        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", isCheese, ExtraTopping.ExtraToppingSize.TWELVE);
         sandwich.addExtraTopping(extraTopping);
 
         // act
-        ArrayList<ExtraTopping> extraToppings = sandwich.getExtraTopping();
+        List<ExtraTopping> extraToppings = sandwich.getExtraTopping();
 
         // assert
         assertEquals(1, extraToppings.size());
@@ -674,7 +674,7 @@ class SandwichTest {
 
         cleanSandwich.addTopping(new Topping("Lettuce", 0.00, false));
         cleanSandwich.addTopping(new Topping("Bacon", 0.50, true));
-        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", ExtraTopping.ExtraToppingSize.TWELVE);
+        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", isCheese, ExtraTopping.ExtraToppingSize.TWELVE);
         cleanSandwich.addExtraTopping(extraTopping);
 
         // act

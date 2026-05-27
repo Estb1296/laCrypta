@@ -21,7 +21,7 @@ public class CheckOutScreen {
         this.input = input;
     }
     public String display() {
-
+        while (true) {
             displayOrderSummary();
 
             System.out.println("1) Confirm Order");
@@ -43,57 +43,57 @@ public class CheckOutScreen {
                     return "CONTINUE";  // ✅ Continue shopping
                 }
                 case 3 -> removeItemFromCart();
+                case 4 -> handlePromoCodeWorkflow();
                 case 0 -> {
                     System.out.println("Order cancelled.");
                     currentOrder.clearCart();
 
                     return "HOME";  // ✅ Go back home
                 }
-                case 4 -> {
-                    // 🛑 Rule Check: Have they already used a code?
-                    if (hasUsedPromo) {
-                        System.out.println("\n⚠️ Error: You have already applied a promo code to this session. Only one promo code is allowed per customer purchase!");
-                        return "CONTINUE";
-                    }
-
-                    System.out.print("Enter secret authorization code: ");
-                    String userEntry = input.nextLine().trim();
-
-                    if (currentOrder.isValidPromoCode(userEntry)) {
-                        System.out.println("\n🔑 Access Granted! Unlocked Variable Discount Mode.");
-
-                        double discountValue = 0.0;
-                        boolean isValidAmount = false;
-
-                        while (!isValidAmount) {
-                            discountValue = InputValidator.getValidDoubleInput(input,
-                                    "Enter the dollar amount to deduct (Max $10.00): $");
-
-                            if (discountValue > 10.00) {
-                                System.out.println("⚠️ Error: This promo code only allows a maximum deduction of $10.00. Please try again.");
-                            } else if (discountValue < 0) {
-                                System.out.println("⚠️ Error: Discount cannot be negative.");
-                            } else {
-                                isValidAmount = true;
-                            }
-                        }
-
-                        currentOrder.setCouponDiscountAmount(discountValue);
-
-                        // the flag so they can never enter this block again!
-                        hasUsedPromo = true;
-
-                        System.out.println("🎉 Success! Apply Discount: -$" + String.format("%.2f", discountValue));
-
-                    } else {
-                        System.out.println("\n❌ Access Denied. Invalid authorization code.");
-                    }
-
-                    return "CONTINUE";
-                }
                 default -> System.out.println("Invalid choice");
             }
-        return "HOME";  // Default fallback
+    }
+    }
+    private void handlePromoCodeWorkflow() {
+        // 🛑 Rule Check: Have they already used a code?
+        if (hasUsedPromo) {
+            System.out.println("\n⚠️ Error: You have already applied a promo code to this session. Only one promo code is allowed per customer purchase!");
+            return;
+        }
+
+        System.out.print("Enter secret authorization code: ");
+        String userEntry = input.nextLine().trim();
+
+        if (currentOrder.isValidPromoCode(userEntry)) {
+            System.out.println("\n🔑 Access Granted! Unlocked Variable Discount Mode.");
+
+            double discountValue = 0.0;
+            boolean isValidAmount = false;
+
+            while (!isValidAmount) {
+                discountValue = InputValidator.getValidDoubleInput(input,
+                        "Enter the dollar amount to deduct (Max $10.00): $");
+
+                if (discountValue > 10.00) {
+                    System.out.println("⚠️ Error: This promo code only allows a maximum deduction of $10.00. Please try again.");
+                } else if (discountValue < 0) {
+                    System.out.println("⚠️ Error: Discount cannot be negative.");
+                } else {
+                    isValidAmount = true;
+                }
+            }
+
+            currentOrder.setCouponDiscountAmount(discountValue);
+
+            // the flag so they can never enter this block again!
+            hasUsedPromo = true;
+
+            System.out.println("🎉 Success! Apply Discount: -$" + String.format("%.2f", discountValue));
+
+        } else {
+            System.out.println("\n❌ Access Denied. Invalid authorization code.");
+        }
+
     }
 
     private void displayOrderSummary() {
@@ -110,7 +110,6 @@ public class CheckOutScreen {
         if (currentOrder.getCouponDiscount() > 0) {
             System.out.println(" Promo Discount: -$" + String.format("%.2f", currentOrder.getCouponDiscount()));
         }
-        System.out.println("Total: $" + String.format("%.2f", currentOrder.calculatePrice()));
 
         System.out.println("\n=====================================");
         System.out.println("Total: $" + String.format("%.2f", currentOrder.calculatePrice()));
@@ -132,6 +131,12 @@ public class CheckOutScreen {
                     // Use Java Pattern Matching to cleanly
                     if (item instanceof Sandwich sandwich) {
                         System.out.println(sandwich.getDescription());
+                    }
+                    if(item instanceof Chips chips){
+                        System.out.println(chips.getDescription());
+                    }
+                    if(item instanceof Drink drink){
+                        System.out.println(drink.getDescription());
                     }
                 });
 
