@@ -163,7 +163,7 @@ public class UserInterface {
                 return;
             }
 
-            System.out.println("Pricing: " + getPricingBySize(sandwich.getSize()));
+            System.out.println("Pricing: +$2.00 per meat");
             System.out.println("""
         A) Chicken
         B) Turkey
@@ -172,60 +172,77 @@ public class UserInterface {
         E) Tuna
         F) No Meat
         
-        X) Add Extra Meat
         Y) Remove Extra Meat
         Z) View Current Meat & Extras
         0) Back""");
 
-            String choice = InputValidator.getValidCharChoice(input, "ABCDEFXYZ0");
+            String choice = InputValidator.getValidCharChoice(input, "ABCDEFYZ0");
             switch (choice) {
-                case "A" -> {
-                    sandwich.setMeat("Chicken");
-                    System.out.println("✅ Selected Chicken");
-                }
-                case "B" -> {
-                    sandwich.setMeat("Turkey");
-                    System.out.println("✅ Selected Turkey");
-                }
-                case "C" -> {
-                    sandwich.setMeat("Roast Beef");
-                    System.out.println("✅ Selected Roast Beef");
-                }
-                case "D" -> {
-                    sandwich.setMeat("Ham");
-                    System.out.println("✅ Selected Ham");
-                }
-                case "E" -> {
-                    sandwich.setMeat("Tuna");
-                    System.out.println("✅ Selected Tuna");
-                }
-                case "F" -> {
-                    sandwich.setMeat("None");
-                    System.out.println("✅ No meat selected");
-                }
-                case "X" -> addExtraMeatScreen(sandwich);
+                case "A" -> handleMeatSelection("Chicken", sandwich);
+                case "B" -> handleMeatSelection("Turkey", sandwich);
+                case "C" -> handleMeatSelection("Roast Beef", sandwich);
+                case "D" -> handleMeatSelection("Ham", sandwich);
+                case "E" -> handleMeatSelection("Tuna", sandwich);
+                case "F" -> handleMeatSelection("None", sandwich);
                 case "Y" -> removeExtraMeatScreen(sandwich);
                 case "Z" -> viewMeatAndExtras(sandwich);
                 case "0" -> inMeatScreen = false;
             }
         }
     }
-    private void addExtraMeatScreen(Sandwich sandwich) {
+
+    /**
+     * Smart meat selection handler:
+     * - First selection: Set as primary meat
+     * - Same meat selected again: Ask to add as extra
+     * - Different meat selected: Automatically add as extra
+     */
+    private void handleMeatSelection(String selectedMeat, Sandwich sandwich) {
+        String currentMeat = sandwich.getMeat();
+
+        // First meat selection
+        if (currentMeat == null) {
+            sandwich.setMeat(selectedMeat);
+            System.out.println("✅ Selected " + selectedMeat);
+        }
+        // Same meat selected again - ask for confirmation
+        else if (currentMeat.equals(selectedMeat)) {
+            System.out.println("⚠️  " + selectedMeat + " is already selected.");
+            System.out.print("Add as extra? (Y/N): ");
+            String response = InputValidator.getValidCharChoice(input, "YN");
+            if (response.equals("Y")) {
+                addExtraMeat(selectedMeat, sandwich);
+            }
+        }
+        // Different meat selected - automatically add as extra
+        else {
+            addExtraMeat(selectedMeat, sandwich);
+        }
+    }
+
+    /**
+     * Creates and adds an extra meat topping with specific meat type
+     */
+    private void addExtraMeat(String meatType, Sandwich sandwich) {
         ExtraTopping extraMeat = new ExtraTopping(
-                "Extra Meat",
+                "Extra Meat - " + meatType,
                 sandwich.getSize().getExtraSize()
         );
         sandwich.addExtraTopping(extraMeat);
-        System.out.println("✅ Added Extra Meat - $" + String.format("%.2f", extraMeat.getPrice()));
+        System.out.println("✅ Added extra " + meatType + " - $" + String.format("%.2f", extraMeat.getPrice()));
     }
 
+    /**
+     * Remove extra meats from a numbered list
+     * Shows all current extra meats and lets user pick which one to remove
+     */
     private void removeExtraMeatScreen(Sandwich sandwich) {
         ArrayList<ExtraTopping> extras = sandwich.getExtraTopping();
         ArrayList<ExtraTopping> meatExtras = new ArrayList<>();
 
         // Filter only extra meat items
         for (ExtraTopping extra : extras) {
-            if (extra.getName().contains("Meat")) {
+            if (extra.getName().contains("Extra Meat")) {
                 meatExtras.add(extra);
             }
         }
@@ -235,33 +252,63 @@ public class UserInterface {
             return;
         }
 
-        System.out.println("\nRemove Extra Meat:");
+        System.out.println("\n════════════════════════════════════");
+        System.out.println("REMOVE EXTRA MEAT");
+        System.out.println("════════════════════════════════════");
         for (int i = 0; i < meatExtras.size(); i++) {
             System.out.println((i + 1) + ") " + meatExtras.get(i).getName() +
                     " (-$" + String.format("%.2f", meatExtras.get(i).getPrice()) + ")");
         }
-        System.out.println("0) Back");
+        System.out.println("0) Cancel");
 
         int targetIndex = InputValidator.getValidListIndex(input, meatExtras.size());
         if (targetIndex != -1) {
             ExtraTopping toRemove = meatExtras.get(targetIndex);
             sandwich.removeExtraTopping(extras.indexOf(toRemove));
-            System.out.println("✅ Extra meat removed.");
+            System.out.println("✅ Removed extra " + toRemove.getName());
         }
     }
+
+    /**
+     * Display primary meat and all extra meats with pricing
+     */
     private void viewMeatAndExtras(Sandwich sandwich) {
-        System.out.println("\n--- Meat & Extras ---");
-        System.out.println("Meat: " + (sandwich.getMeat() != null ? sandwich.getMeat() : "None"));
+        System.out.println("\n════════════════════════════════════");
+        System.out.println("CURRENT MEAT SELECTION");
+        System.out.println("════════════════════════════════════");
+        System.out.println("Primary Meat: " + (sandwich.getMeat() != null ? sandwich.getMeat() : "None"));
 
         ArrayList<ExtraTopping> extras = sandwich.getExtraTopping();
-        System.out.println("Extra Meat Items:");
+        ArrayList<ExtraTopping> meatExtras = new ArrayList<>();
+
+        // Filter and display only extra meats
         for (ExtraTopping extra : extras) {
-            if (extra.getName().contains("Meat")) {
-                System.out.println("  • " + extra.getName() + " - $" + String.format("%.2f", extra.getPrice()));
+            if (extra.getName().contains("Extra Meat")) {
+                meatExtras.add(extra);
             }
         }
-        System.out.println();
+
+        if (meatExtras.isEmpty()) {
+            System.out.println("Extra Meats: None");
+        } else {
+            System.out.println("Extra Meats:");
+            for (int i = 0; i < meatExtras.size(); i++) {
+                System.out.println("  " + (i + 1) + ") " + meatExtras.get(i).getName() +
+                        " - $" + String.format("%.2f", meatExtras.get(i).getPrice()));
+            }
+        }
+        double totalExtrasPrice = meatExtras.stream()
+                .mapToDouble(ExtraTopping::getPrice)
+                .sum();
+
+        System.out.println("\nExtra Meats Total: $" + String.format("%.2f", totalExtrasPrice));
+        System.out.println("════════════════════════════════════\n");
     }
+
+// ============================================================
+// SAME IMPROVEMENTS FOR CHEESE - DO THE SAME PATTERN
+// ============================================================
+
     private void cheeseAndExtraScreen(Sandwich sandwich) {
         boolean inCheeseScreen = true;
         while (inCheeseScreen) {
@@ -274,7 +321,7 @@ public class UserInterface {
                 return;
             }
 
-            System.out.println("Pricing: " + getPricingBySize(sandwich.getSize()));
+            System.out.println("Pricing: +$1.00 per cheese");
             System.out.println("""
         A) Cheddar
         B) Swiss
@@ -283,60 +330,73 @@ public class UserInterface {
         E) Pepper Jack
         F) No Cheese
         
-        X) Add Extra Cheese
         Y) Remove Extra Cheese
         Z) View Current Cheese & Extras
         0) Back""");
 
-            String choice = InputValidator.getValidCharChoice(input, "ABCDEFXYZ0");
+            String choice = InputValidator.getValidCharChoice(input, "ABCDEFYZ0");
             switch (choice) {
-                case "A" -> {
-                    sandwich.setCheese("Cheddar");
-                    System.out.println("✅ Selected Cheddar");
-                }
-                case "B" -> {
-                    sandwich.setCheese("Swiss");
-                    System.out.println("✅ Selected Swiss");
-                }
-                case "C" -> {
-                    sandwich.setCheese("Provolone");
-                    System.out.println("✅ Selected Provolone");
-                }
-                case "D" -> {
-                    sandwich.setCheese("American");
-                    System.out.println("✅ Selected American");
-                }
-                case "E" -> {
-                    sandwich.setCheese("Pepper Jack");
-                    System.out.println("✅ Selected Pepper Jack");
-                }
-                case "F" -> {
-                    sandwich.setCheese("None");
-                    System.out.println("✅ No cheese selected");
-                }
-                case "X" -> addExtraCheeseScreen(sandwich);
+                case "A" -> handleCheeseSelection("Cheddar", sandwich);
+                case "B" -> handleCheeseSelection("Swiss", sandwich);
+                case "C" -> handleCheeseSelection("Provolone", sandwich);
+                case "D" -> handleCheeseSelection("American", sandwich);
+                case "E" -> handleCheeseSelection("Pepper Jack", sandwich);
+                case "F" -> handleCheeseSelection("None", sandwich);
                 case "Y" -> removeExtraCheeseScreen(sandwich);
                 case "Z" -> viewCheeseAndExtras(sandwich);
                 case "0" -> inCheeseScreen = false;
             }
         }
     }
-    private void addExtraCheeseScreen(Sandwich sandwich) {
+
+    /**
+     * Smart cheese selection handler (same logic as meat)
+     */
+    private void handleCheeseSelection(String selectedCheese, Sandwich sandwich) {
+        String currentCheese = sandwich.getCheese();
+
+        // First cheese selection
+        if (currentCheese == null) {
+            sandwich.setCheese(selectedCheese);
+            System.out.println("✅ Selected " + selectedCheese);
+        }
+        // Same cheese selected again - ask for confirmation
+        else if (currentCheese.equals(selectedCheese)) {
+            System.out.println("⚠️  " + selectedCheese + " is already selected.");
+            System.out.print("Add as extra? (Y/N): ");
+            String response = InputValidator.getValidCharChoice(input, "YN");
+            if (response.equals("Y")) {
+                addExtraCheese(selectedCheese, sandwich);
+            }
+        }
+        // Different cheese selected - automatically add as extra
+        else {
+            addExtraCheese(selectedCheese, sandwich);
+        }
+    }
+
+    /**
+     * Creates and adds an extra cheese topping with specific cheese type
+     */
+    private void addExtraCheese(String cheeseType, Sandwich sandwich) {
         ExtraTopping extraCheese = new ExtraTopping(
-                "Extra Cheese",
+                "Extra Cheese - " + cheeseType,
                 sandwich.getSize().getExtraSize()
         );
         sandwich.addExtraTopping(extraCheese);
-        System.out.println("✅ Added Extra Cheese - $" + String.format("%.2f", extraCheese.getPrice()));
+        System.out.println("✅ Added extra " + cheeseType + " - $" + String.format("%.2f", extraCheese.getPrice()));
     }
 
+    /**
+     * Remove extra cheeses from a numbered list
+     */
     private void removeExtraCheeseScreen(Sandwich sandwich) {
         ArrayList<ExtraTopping> extras = sandwich.getExtraTopping();
         ArrayList<ExtraTopping> cheeseExtras = new ArrayList<>();
 
         // Filter only extra cheese items
         for (ExtraTopping extra : extras) {
-            if (extra.getName().contains("Cheese")) {
+            if (extra.getName().contains("Extra Cheese")) {
                 cheeseExtras.add(extra);
             }
         }
@@ -346,33 +406,59 @@ public class UserInterface {
             return;
         }
 
-        System.out.println("\nRemove Extra Cheese:");
+        System.out.println("\n════════════════════════════════════");
+        System.out.println("REMOVE EXTRA CHEESE");
+        System.out.println("════════════════════════════════════");
         for (int i = 0; i < cheeseExtras.size(); i++) {
             System.out.println((i + 1) + ") " + cheeseExtras.get(i).getName() +
                     " (-$" + String.format("%.2f", cheeseExtras.get(i).getPrice()) + ")");
         }
-        System.out.println("0) Back");
+        System.out.println("0) Cancel");
 
         int targetIndex = InputValidator.getValidListIndex(input, cheeseExtras.size());
         if (targetIndex != -1) {
             ExtraTopping toRemove = cheeseExtras.get(targetIndex);
             sandwich.removeExtraTopping(extras.indexOf(toRemove));
-            System.out.println("✅ Extra cheese removed.");
+            System.out.println("✅ Removed extra " + toRemove.getName());
         }
     }
 
+    /**
+     * Display primary cheese and all extra cheeses with pricing
+     */
     private void viewCheeseAndExtras(Sandwich sandwich) {
-        System.out.println("\n--- Cheese & Extras ---");
-        System.out.println("Cheese: " + (sandwich.getCheese() != null ? sandwich.getCheese() : "None"));
+        System.out.println("\n════════════════════════════════════");
+        System.out.println("CURRENT CHEESE SELECTION");
+        System.out.println("════════════════════════════════════");
+        System.out.println("Primary Cheese: " + (sandwich.getCheese() != null ? sandwich.getCheese() : "None"));
 
         ArrayList<ExtraTopping> extras = sandwich.getExtraTopping();
-        System.out.println("Extra Cheese Items:");
+        ArrayList<ExtraTopping> cheeseExtras = new ArrayList<>();
+
+        // Filter and display only extra cheeses
         for (ExtraTopping extra : extras) {
-            if (extra.getName().contains("Cheese")) {
-                System.out.println("  • " + extra.getName() + " - $" + String.format("%.2f", extra.getPrice()));
+            if (extra.getName().contains("Extra Cheese")) {
+                cheeseExtras.add(extra);
             }
         }
-        System.out.println();
+
+        if (cheeseExtras.isEmpty()) {
+            System.out.println("Extra Cheeses: None");
+        } else {
+            System.out.println("Extra Cheeses:");
+            for (int i = 0; i < cheeseExtras.size(); i++) {
+                System.out.println("  " + (i + 1) + ") " + cheeseExtras.get(i).getName() +
+                        " - $" + String.format("%.2f", cheeseExtras.get(i).getPrice()));
+            }
+        }
+
+        // Calculate total cheese cost
+        double totalExtrasPrice = cheeseExtras.stream()
+                .mapToDouble(ExtraTopping::getPrice)
+                .sum();
+
+        System.out.println("\nExtra Cheeses Total: $" + String.format("%.2f", totalExtrasPrice));
+        System.out.println("════════════════════════════════════\n");
     }
     private void toppingsAndSaucesScreen(Sandwich sandwich) {
         boolean inToppingsAndSauces = true;
@@ -400,26 +486,6 @@ public class UserInterface {
             }
         }
     }
-    private void viewCustomizations(Sandwich sandwich) {
-        System.out.println("\n════════════════════════════════════");
-        System.out.println("CURRENT CUSTOMIZATIONS");
-        System.out.println("════════════════════════════════════");
-
-        System.out.println("Meat: " + (sandwich.getMeat() != null ? sandwich.getMeat() : "None"));
-        System.out.println("Cheese: " + (sandwich.getCheese() != null ? sandwich.getCheese() : "None"));
-
-        ArrayList<Topping> toppings = sandwich.getToppings();
-        System.out.println("Toppings: " + (toppings.isEmpty() ? "None" : toppings.size() + " added"));
-
-        ArrayList<ExtraTopping> extras = sandwich.getExtraTopping();
-        System.out.println("Extra Toppings: " + (extras.isEmpty() ? "None" : extras.size() + " added"));
-
-        ArrayList<String> sauces = sandwich.getSauces();
-        System.out.println("Sauces: " + (sauces.isEmpty() ? "None" : String.join(", ", sauces)));
-
-        System.out.println("\nCurrent Price: $" + String.format("%.2f", sandwich.calculatePrice()));
-        System.out.println("════════════════════════════════════\n");
-    }
 
     private void viewToppingsAndSauces(Sandwich sandwich) {
         System.out.println("\n--- Toppings & Sauces ---");
@@ -445,6 +511,38 @@ public class UserInterface {
         }
         System.out.println();
     }
+    private void viewCustomizations(Sandwich sandwich) {
+        System.out.println("\n════════════════════════════════════");
+        System.out.println("CURRENT CUSTOMIZATIONS");
+        System.out.println("════════════════════════════════════");
+
+        System.out.println("Meat: " + (sandwich.getMeat() != null ? sandwich.getMeat() : "None"));
+        System.out.println("Cheese: " + (sandwich.getCheese() != null ? sandwich.getCheese() : "None"));
+
+        ArrayList<Topping> toppings = sandwich.getToppings();
+        System.out.println("Toppings: " + (toppings.isEmpty() ? "None" : toppings.size() + " added"));
+
+        ArrayList<ExtraTopping> extras = sandwich.getExtraTopping();
+        ArrayList<ExtraTopping> meatExtras = new ArrayList<>();
+        ArrayList<ExtraTopping> cheeseExtras = new ArrayList<>();
+
+        for (ExtraTopping extra : extras) {
+            if (extra.getName().contains("Extra Meat")) {
+                meatExtras.add(extra);
+            } else if (extra.getName().contains("Extra Cheese")) {
+                cheeseExtras.add(extra);
+            }
+        }
+
+        System.out.println("Extra Meats: " + (meatExtras.isEmpty() ? "None" : meatExtras.size() + " added"));
+        System.out.println("Extra Cheeses: " + (cheeseExtras.isEmpty() ? "None" : cheeseExtras.size() + " added"));
+
+        ArrayList<String> sauces = sandwich.getSauces();
+        System.out.println("Sauces: " + (sauces.isEmpty() ? "None" : String.join(", ", sauces)));
+
+        System.out.println("\nCurrent Price: $" + String.format("%.2f", sandwich.getPrice()));
+        System.out.println("════════════════════════════════════\n");
+    }
     private String getPricingBySize(Sandwich.SandwichSize size) {
         if (size == null) return "Not selected";
         return switch (size) {
@@ -455,14 +553,13 @@ public class UserInterface {
     }
     private void signatureSandwichScreen() {
         System.out.println("""
-Select a Signature Sandwich:
-A) Classic BLT (8" White, Bacon, Cheddar, Veggies, Ranch - Toasted)
-B) Philly Cheese Steak (8" White, Steak, American, Peppers, Mayo - Toasted)
-0) Cancel""");
+        Select a Signature Sandwich:
+        A) Classic BLT (8" White, Bacon, Cheddar, Veggies, Ranch - Toasted)
+        B) Philly Cheese Steak (8" White, Steak, American, Peppers, Mayo - Toasted)
+        0) Cancel""");
 
         String choice = InputValidator.getValidCharChoice(input, "AB0");
         Sandwich signatureSandwich = null;
-
         switch(choice) {
             case "A" -> {
                 signatureSandwich = new BLT();
@@ -492,21 +589,16 @@ B) Philly Cheese Steak (8" White, Steak, American, Peppers, Mayo - Toasted)
 Would you like to customize this sandwich?
 1) Change Meat
 2) Change Cheese
-3) Add Regular Toppings
-4) Add Sauces
-5) Extra Meat/Cheese
-6) Confirm and Add to Order
+3) Add Toppings & Sauces
+4) Confirm and Add to Order
 0) Cancel Item""");
 
-            int choice = InputValidator.getValidIntegerInput(input, "Pick an option:", 0,6);
+            int choice = InputValidator.getValidIntegerInput(input, "Pick an option:", 0, 4);
             switch(choice) {
-                case 1 -> meatAndExtraScreen(sandwich);     // Uses your existing meat screen!
-                case 2 -> cheeseAndExtraScreen(sandwich);   // Uses your existing cheese screen!
-                case 3 -> toppingsScreen(sandwich);
-                case 4 -> saucesScreen(sandwich);
-                case 5->  toppingsMenuScreen(sandwich);
-                case 6 -> {
-                    // Saves the sandwich to my Order cart list
+                case 1 -> meatAndExtraScreen(sandwich);
+                case 2 -> cheeseAndExtraScreen(sandwich);
+                case 3 -> toppingsAndSaucesScreen(sandwich);  // ← This has toppings + sauces
+                case 4 -> {
                     currentOrder.addItem(sandwich);
                     System.out.println("🛒 Sandwich added to your order cart!");
                     customizing = false;
@@ -567,11 +659,6 @@ Would you like to customize this sandwich?
             displaySandwichSummary(sandwich);
         }
         }
-
-
-
-
-
 
     //Topping selection here
     private void toppingsScreen(Sandwich sandwich) {
