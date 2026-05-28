@@ -1,0 +1,39 @@
+╔════════════════════════════════════╗
+║         SANDWICH SHOP RECEIPT      ║
+╚════════════════════════════════════╝
+
+Date & Time: 20260528-145750
+════════════════════════════════════
+
+ORDER DETAILS:
+────────────────────────────────────
+
+SANDWICHS:
+1) 12" Wheat Sandwich (Toasted) - TOASTED - $16.75
+   Sandwich Specifications:
+  • Size: 12"
+  • Bread: Wheat
+  • Meat: Steak
+  • Cheese: Provolone
+  • Toasted: Yes
+  • Regular Toppings: Lettuce, Peppers, Tomatoes, Onions, Cucumbers, Pickles, Jalapenos, Olives
+  • Premium Toppings: None
+  • Sauces: Mayo, Thousand Island, Ranch, Vinaigrette
+
+DRINKS:
+1) Medium Iced Tea - $2.50
+   Drink: Medium Iced Tea
+
+CHIPSS:
+1) Doritos Nacho Cheese - $1.50
+   Chips: Doritos Nacho Cheese ($1.50)
+
+
+════════════════════════════════════
+SUBTOTAL: $20.75
+TAX (0%%): $0.00
+TOTAL: $20.75
+════════════════════════════════════
+
+Thank you for your order!
+Please come again soon!

@@ -1,0 +1,45 @@
+╔════════════════════════════════════╗
+║         SANDWICH SHOP RECEIPT      ║
+╚════════════════════════════════════╝
+
+Date & Time: 20260528-140812
+════════════════════════════════════
+
+ORDER DETAILS:
+────────────────────────────────────
+
+SANDWICHS:
+1) 12" Wheat Sandwich (Toasted) - TOASTED - $16.75
+   Sandwich Specifications:
+  • Size: 12"
+  • Bread: Wheat
+  • Meat: Chicken
+  • Cheese: American
+  • Toasted: Yes
+  • Regular Toppings: Lettuce, Peppers, Tomatoes, Pickles
+  • Premium Toppings: None
+  • Sauces: Mustard
+2) 8" White Sandwich (Toasted) - TOASTED - $11.50
+   Sandwich Specifications:
+  • Size: 8"
+  • Bread: White
+  • Meat: Steak
+  • Cheese: American
+  • Toasted: Yes
+  • Regular Toppings: Peppers
+  • Premium Toppings: None
+  • Sauces: Mayo
+
+DRINKS:
+1) Small Cola - $2.00
+   Drink: Small Cola
+
+
+════════════════════════════════════
+SUBTOTAL: $20.25
+TAX (0%%): $0.00
+TOTAL: $20.25
+════════════════════════════════════
+
+Thank you for your order!
+Please come again soon!
