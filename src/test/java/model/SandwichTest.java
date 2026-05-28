@@ -1,5 +1,8 @@
 package model;
 
+import com.pluralsight.model.ExtraTopping;
+import com.pluralsight.model.Sandwich;
+import com.pluralsight.model.Topping;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

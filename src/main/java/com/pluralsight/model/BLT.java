@@ -1,4 +1,4 @@
-package model;
+package com.pluralsight.model;
 
 public class BLT extends Sandwich{
     public BLT(){

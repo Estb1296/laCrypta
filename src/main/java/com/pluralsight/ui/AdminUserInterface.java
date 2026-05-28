@@ -1,8 +1,9 @@
-package ui;
+package com.pluralsight.ui;
 
-import data.AuditLog;
-import data.OrderRepository;
-import model.Order;
+import com.pluralsight.data.AuditLog;
+import com.pluralsight.data.OrderRepository;
+import com.pluralsight.model.Order;
+import com.pluralsight.ui.util.InputValidator;
 
 
 import java.util.ArrayList;
@@ -69,10 +70,11 @@ import java.util.Scanner;
             4) Display High Value Orders
             5) Reset Database
             6) Show cancelled Orders
+            7) Search Receipts By Folder
             7) Logout
             0) Exit""");
 
-                int choice = scanner.nextInt();
+                int choice = InputValidator.getValidMenuChoice(scanner, 0, 7);
                 scanner.nextLine();
 
                 switch (choice) {
@@ -82,7 +84,8 @@ import java.util.Scanner;
                     case 4-> displayHighValueOrders();
                     case 5-> handleDatabaseReset();
                     case 6 -> displayAbortedOrderMetrics();
-                    case 7 -> isRunning = false;
+                    case 7 ->  searchReceiptsByFolder();
+                    case 8-> isRunning = false;
                     case 0 -> System.exit(0);
                     default -> System.out.println("Invalid choice");
                 }
@@ -256,5 +259,29 @@ import java.util.Scanner;
                 }
             }
             System.out.printf("Total Preventable Kitchen Waste: $%.2f\n", lostRevenue);
+        }
+        private void searchReceiptsByFolder() {
+            System.out.println("\n🔍 --- SEARCH RECEIPTS BY DATE FOLDER ---");
+
+            // Utilizing your existing InputValidator utility!
+            String folderName = InputValidator.getValidStringInput(scanner, "➔ Enter folder name (e.g., 20260528): ");
+
+            System.out.println("Searching directory for: [" + folderName + "]...");
+            ArrayList<String> receipts = orderRepository.getReceiptsFromFolder(folderName);
+
+            if (receipts.isEmpty()) {
+                System.out.println("❌ No receipts found, or folder does not exist.");
+                return;
+            }
+
+            System.out.println("\n==================================================");
+            System.out.printf("   FOUND %d RECEIPT(S) IN FOLDER: %s\n", receipts.size(), folderName);
+            System.out.println("==================================================");
+
+            for (int i = 0; i < receipts.size(); i++) {
+                System.out.printf("\n📄 --- RECEIPT #%d ---\n", (i + 1));
+                System.out.println(receipts.get(i));
+                System.out.println("──────────────────────────────────────────────────");
+            }
         }
 }

@@ -1,4 +1,4 @@
-package model;
+package com.pluralsight.model;
 
 public abstract class MenuItem implements Priceable{
     private final String name;

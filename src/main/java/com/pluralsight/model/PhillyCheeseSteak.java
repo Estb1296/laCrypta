@@ -1,4 +1,4 @@
-package model;
+package com.pluralsight.model;
 
 public class PhillyCheeseSteak extends Sandwich{
     public PhillyCheeseSteak(){

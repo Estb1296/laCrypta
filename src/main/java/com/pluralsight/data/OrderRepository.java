@@ -1,6 +1,6 @@
-package data;
+package com.pluralsight.data;
 
-import model.Order;
+import com.pluralsight.model.Order;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -115,5 +115,39 @@ public class OrderRepository {
             throw new RuntimeException("The order wasn't properly tracked.");
         }
         auditLogs.add(cancelLog); // Saves it to cache for Option 6 in admin panel!
+    }
+    /**
+     * Search and retrieve the contents of all receipts inside a specific date folder
+     * @param folderName The name of the directory (e.g., "20260528")
+     * @return List of strings containing receipt text content
+     */
+    public ArrayList<String> getReceiptsFromFolder(String folderName) {
+        ArrayList<String> receiptContents = new ArrayList<>();
+
+        // Target the specific folder inside your receipts directory
+        // Adjust "receipts/" if your ReceiptWriter stores them elsewhere!
+        java.io.File targetFolder = new java.io.File("receipts/" + folderName);
+
+        // Guard clause: check if the directory actually exists
+        if (!targetFolder.exists() || !targetFolder.isDirectory()) {
+            return receiptContents;
+        }
+
+        // Gather all files inside that directory
+        java.io.File[] files = targetFolder.listFiles();
+        if (files != null) {
+            for (java.io.File file : files) {
+                if (file.isFile() && file.getName().endsWith(".txt")) { // Only read text files
+                    try {
+                        // Read all text content from the file seamlessly
+                        String content = java.nio.file.Files.readString(file.toPath());
+                        receiptContents.add(content);
+                    } catch (IOException e) {
+                        System.out.println("⚠️ System Error: Unable to read receipt file: " + file.getName());
+                    }
+                }
+            }
+        }
+        return receiptContents;
     }
 }

@@ -1,7 +1,7 @@
-package data;
+package com.pluralsight.data;
 
-import model.Order;
-import model.MenuItem;
+import com.pluralsight.model.Order;
+import com.pluralsight.model.MenuItem;
 
 import java.io.File;
 import java.io.FileWriter;

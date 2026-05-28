@@ -1,4 +1,4 @@
-package model;
+package com.pluralsight.model;
 
 public class Chips extends MenuItem {
     private final double price;

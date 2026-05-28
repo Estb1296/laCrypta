@@ -1,4 +1,4 @@
-package ui.util;
+package com.pluralsight.ui.util;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -31,39 +31,7 @@ import java.util.Scanner;
             }
         }
 
-        /**
-         * Get valid single character choice (A-Z, 0-9)
-         * Handles invalid inputs and case-insensitivity gracefully
-         * @param input Scanner object
-         * @param validChars String of valid characters (e.g., "ABC0")
-         * @return Valid character choice in uppercase
-         */
-        public static String getValidCharChoice(Scanner input, String validChars) {
-            while (true) {
-                try {
-                    String inputString = input.nextLine().trim().toUpperCase();
 
-                    if (inputString.isEmpty()) {
-                        System.out.println("❌ Input cannot be empty. Please try again.");
-                        continue;
-                    }
-
-                    if (inputString.length() != 1) {
-                        System.out.println("❌ Please enter a single character only.");
-                        continue;
-                    }
-
-                    if (!validChars.contains(inputString)) {
-                        System.out.println("❌ Invalid choice. Valid options: " + validChars);
-                        continue;
-                    }
-
-                    return inputString;
-                } catch (Exception e) {
-                    System.out.println("❌ Invalid input. Please try again.");
-                }
-            }
-        }
 
         /**
          * Get valid string input (non-empty)

@@ -1,6 +1,6 @@
 package com.pluralsight;
 
-import ui.UserInterface;
+import com.pluralsight.ui.UserInterface;
 
 public class App {
     public static void main(String[] args) {

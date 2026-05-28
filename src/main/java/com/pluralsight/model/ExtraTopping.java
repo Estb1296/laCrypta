@@ -1,4 +1,4 @@
-package model;
+package com.pluralsight.model;
 
 public class ExtraTopping extends MenuItem {
     private final ExtraToppingSize size;

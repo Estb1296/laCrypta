@@ -1,5 +1,6 @@
 package model;
 
+import com.pluralsight.model.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

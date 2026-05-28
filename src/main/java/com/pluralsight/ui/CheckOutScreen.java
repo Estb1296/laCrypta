@@ -1,9 +1,9 @@
-package ui;
+package com.pluralsight.ui;
 
-import data.OrderRepository;
+import com.pluralsight.data.OrderRepository;
 
-import model.*;
-import ui.util.InputValidator;
+import com.pluralsight.model.*;
+import com.pluralsight.ui.util.InputValidator;
 
 import java.io.IOException;
 
@@ -35,6 +35,7 @@ public class CheckOutScreen {
             switch (choice) {
                 case 1 -> {
                     completeCheckout();
+
                     return "HOME";  // ✅ Order complete, go home
                 }
                 case 2 -> {
@@ -103,9 +104,12 @@ public class CheckOutScreen {
             System.out.println("Cart is empty");
             return;
         }
+
+        ArrayList<MenuItem> reversedItems = new ArrayList<>(items);
+        java.util.Collections.reverse(reversedItems);
         displayItemsByCategory(items, "Sandwich");
-        displayItemsByCategory(items, "Drink");
         displayItemsByCategory(items, "Chips");
+        displayItemsByCategory(items, "Drink");
         if (currentOrder.getCouponDiscount() > 0) {
             System.out.println(" Promo Discount: -$" + String.format("%.2f", currentOrder.getCouponDiscount()));
         }
@@ -182,6 +186,12 @@ public class CheckOutScreen {
         double total = currentOrder.calculatePrice();
         System.out.println("\n========== CHECKOUT ==========");
         System.out.println("Total Amount: $" + String.format("%.2f", total));
+        boolean userConfirmed = InputValidator.getConfirmation(input, "Are you sure you want to finalize this order?");
+
+        if (!userConfirmed) {
+            System.out.println("\n❌ Checkout paused. Returning to the checkout menu with your items intact.");
+            return; // 🛑 Early exit! Drops out of this method immediately, leaving the cart exactly as it was.
+        }
 
         try {
             // Use repository to handle receipt + audit logging
