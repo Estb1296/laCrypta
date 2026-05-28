@@ -18,7 +18,7 @@ public class Drink extends MenuItem {
         if (size == null) return 0.0;
 
         return switch (size) {
-            case "Small"  -> 1.99; // Matches your UI Drink pricing ($1.99)
+            case "Small"  -> 2.00; // Matches your UI Drink pricing ($1.99)
             case "Medium" -> 2.50;
             case "Large"  -> 3.00;
             default       -> 0.0;

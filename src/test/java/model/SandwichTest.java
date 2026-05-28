@@ -526,7 +526,7 @@ class SandwichTest {
     void addExtraTopping_ValidExtraTopping_ExtraToppingAdded() {
         // arrange
         sandwich.setSize(Sandwich.SandwichSize.EIGHT);
-        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", isCheese, ExtraTopping.ExtraToppingSize.TWELVE);
+        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", false, ExtraTopping.ExtraToppingSize.TWELVE);
         double basePriceBeforeExtra = sandwich.getPrice();
 
         // act
@@ -542,8 +542,8 @@ class SandwichTest {
     void addExtraTopping_MultipleExtraToppings_AllAdded() {
         // arrange
         sandwich.setSize(Sandwich.SandwichSize.TWELVE);
-        ExtraTopping extra1 = new ExtraTopping("Extra Meat", isCheese, ExtraTopping.ExtraToppingSize.TWELVE);
-        ExtraTopping extra2 = new ExtraTopping("Extra Cheese", isCheese, ExtraTopping.ExtraToppingSize.TWELVE);
+        ExtraTopping extra1 = new ExtraTopping("Extra Meat", false, ExtraTopping.ExtraToppingSize.TWELVE);
+        ExtraTopping extra2 = new ExtraTopping("Extra Cheese", true, ExtraTopping.ExtraToppingSize.TWELVE);
 
         // act
         sandwich.addExtraTopping(extra1);
@@ -559,7 +559,7 @@ class SandwichTest {
         sandwich.setSize(Sandwich.SandwichSize.TWELVE);
         double basePrice = sandwich.getPrice(); // Capture base price before adding anything
 
-        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", isCheese, ExtraTopping.ExtraToppingSize.TWELVE);
+        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", true, ExtraTopping.ExtraToppingSize.TWELVE);
         sandwich.addExtraTopping(extraTopping);
 
         // act
@@ -573,7 +573,7 @@ class SandwichTest {
     void removeExtraTopping_ValidIndex_ToppingRemovedAndPriceReverted() {
         // arrange
         sandwich.setSize(Sandwich.SandwichSize.TWELVE);
-        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", isCheese, ExtraTopping.ExtraToppingSize.TWELVE);
+        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", true, ExtraTopping.ExtraToppingSize.TWELVE);
         sandwich.addExtraTopping(extraTopping);
 
         // Dynamically get the price of the topping instead of hardcoding 2.00
@@ -592,7 +592,7 @@ class SandwichTest {
     void removeExtraTopping_InvalidIndex_NoExceptionThrown() {
         // arrange
         sandwich.setSize(Sandwich.SandwichSize.TWELVE);
-        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", isCheese, ExtraTopping.ExtraToppingSize.TWELVE);
+        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", false, ExtraTopping.ExtraToppingSize.TWELVE);
         sandwich.addExtraTopping(extraTopping);
 
         // act & assert
@@ -614,7 +614,7 @@ class SandwichTest {
     void getExtraTopping_ExtraToppingsAdded_ReturnsExtraToppings() {
         // arrange
         sandwich.setSize(Sandwich.SandwichSize.TWELVE);
-        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", isCheese, ExtraTopping.ExtraToppingSize.TWELVE);
+        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", true, ExtraTopping.ExtraToppingSize.TWELVE);
         sandwich.addExtraTopping(extraTopping);
 
         // act
@@ -677,16 +677,15 @@ class SandwichTest {
 
         cleanSandwich.addTopping(new Topping("Lettuce", 0.00, false));
         cleanSandwich.addTopping(new Topping("Bacon", 0.50, true));
-        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", isCheese, ExtraTopping.ExtraToppingSize.TWELVE);
+        ExtraTopping extraTopping = new ExtraTopping("Extra Meat", false, ExtraTopping.ExtraToppingSize.TWELVE);
         cleanSandwich.addExtraTopping(extraTopping);
 
         // act
         double baseTwelveInchPrice = 8.50;
-        double premiumMeatPrice = 3.00;
-        double premiumCheesePrice = 3.00;
-        double baconPrice = 0.00;
-
-        double extraMeatPrice = 2.00;
+        double premiumMeatPrice    = 3.00;
+        double premiumCheesePrice  = 3.00;
+        double baconPrice          = 0.50;  // was 0.00 — Bacon was constructed with price 0.50
+        double extraMeatPrice      = 1.50;  // was 2.00 — 12" meat full rate is 1.50
 
         double expectedPrice = baseTwelveInchPrice + premiumMeatPrice + premiumCheesePrice + baconPrice + extraMeatPrice;
         double price = cleanSandwich.calculatePrice();
