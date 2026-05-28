@@ -26,19 +26,16 @@ public class ReceiptWriter {
         // Create folder and get path
         String folderPath = createAndGetFolderPath();
 
-        // Generate filename for today
-        LocalDate today = LocalDate.now();
-        String filename = generateFilename(today);
+        // Generate filename with current timestamp
+        String filename = generateFilename();
         String filepath = folderPath + filename;
 
         // Generate receipt content
         String receiptContent = generateReceiptContent(order);
 
-        // Write to file
-        // Append to file (append=true means don't overwrite)
-        try (FileWriter writer = new FileWriter(filepath, true)) {
+        // Write to file (each order gets its own file)
+        try (FileWriter writer = new FileWriter(filepath, false)) {  // false = create new file
             writer.write(receiptContent);
-            writer.write("\n════════════════════════════════════════\n\n");  // Separator
         }
 
         return filename;
@@ -48,9 +45,10 @@ public class ReceiptWriter {
      * Generates a unique filename with timestamp
      * Format: receipt_YYYY_MM_DD_HH_MM_SS_mmm.txt
      */
-    private String generateFilename(LocalDate date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return "orders-" + date.format(formatter) + ".txt";
+    private String generateFilename() {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss");
+        return now.format(formatter) + ".txt";
     }
 
     /**
@@ -61,12 +59,12 @@ public class ReceiptWriter {
 
         // Header
         receipt.append("╔════════════════════════════════════╗\n");
-        receipt.append("║         SANDWICH SHOP RECEIPT       ║\n");
+        receipt.append("║         SANDWICH SHOP RECEIPT      ║\n");
         receipt.append("╚════════════════════════════════════╝\n\n");
 
         // Timestamp
         LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss");
         receipt.append("Date & Time: ").append(now.format(formatter)).append("\n");
         receipt.append("═".repeat(36)).append("\n\n");
 
@@ -119,6 +117,7 @@ public class ReceiptWriter {
     /**
      * Creates the folder structure for today's receipts
      * Creates: receipts/2026-01-15/ (if it doesn't exist)
+     *
      * @return The folder path
      */
     private String createAndGetFolderPath() {
@@ -126,14 +125,13 @@ public class ReceiptWriter {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String folderPath = RECEIPTS_FOLDER + today.format(formatter) + "/";
 
-        // Create folder if it doesn't exist
         File folder = new File(folderPath);
         if (!folder.exists()) {
-            boolean created = folder.mkdirs();  // Store the result
+            boolean created = folder.mkdirs();
             if (!created) {
                 System.out.println("Warning: Could not create folder: " + folderPath);
             }
         }
-        return folderPath;
+        return folderPath;  // Return the path string
     }
 }

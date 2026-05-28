@@ -32,3 +32,71 @@ Please come again soon!
 
 ════════════════════════════════════════
 
+╔════════════════════════════════════╗
+║         SANDWICH SHOP RECEIPT       ║
+╚════════════════════════════════════╝
+
+Date & Time: 2026-05-27 15:31:35
+════════════════════════════════════
+
+ORDER DETAILS:
+────────────────────────────────────
+
+SANDWICHS:
+1) 8" White Sandwich (Toasted) - TOASTED - $12.00
+   Sandwich Specifications:
+  • Size: 8"
+  • Bread: White
+  • Meat: Turkey
+  • Cheese: American
+  • Toasted: Yes
+  • Regular Toppings: Lettuce, Tomatoes, Pickles
+  • Premium Toppings: None
+  • Sauces: Mustard, Thousand Island
+
+
+════════════════════════════════════
+SUBTOTAL: $12.00
+TAX (0%%): $0.00
+TOTAL: $12.00
+════════════════════════════════════
+
+Thank you for your order!
+Please come again soon!
+
+════════════════════════════════════════
+
+╔════════════════════════════════════╗
+║         SANDWICH SHOP RECEIPT       ║
+╚════════════════════════════════════╝
+
+Date & Time: 2026-05-27 15:40:58
+════════════════════════════════════
+
+ORDER DETAILS:
+────────────────────────────────────
+
+SANDWICHS:
+1) 8" White Sandwich (Toasted) - TOASTED - $10.00
+   Sandwich Specifications:
+  • Size: 8"
+  • Bread: White
+  • Meat: Turkey
+  • Cheese: None
+  • Toasted: Yes
+  • Regular Toppings: Peppers, Onions, Cucumbers
+  • Premium Toppings: None
+  • Sauces: Mustard, Ranch, Thousand Island
+
+
+════════════════════════════════════
+SUBTOTAL: $10.00
+TAX (0%%): $0.00
+TOTAL: $10.00
+════════════════════════════════════
+
+Thank you for your order!
+Please come again soon!
+
+════════════════════════════════════════
+

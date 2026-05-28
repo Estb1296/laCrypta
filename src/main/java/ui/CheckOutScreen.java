@@ -23,7 +23,6 @@ public class CheckOutScreen {
     public String display() {
         while (true) {
             displayOrderSummary();
-
             System.out.println("1) Confirm Order");
             System.out.println("2) Continue Shopping");
             System.out.println("3) Remove Item from Cart");

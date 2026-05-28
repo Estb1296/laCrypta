@@ -1116,13 +1116,13 @@ public class UserInterface {
         this.currentSandwich = new Sandwich();// Wipes workspace cleanly ready for another sandwich
 
         // Sequential, readable execution pipeline (All methods adhere to 5-20 lines rule)
-        runSizeSelection();
-        runBreadSelection();
-        runMeatSelection();
-        runCheeseSelection();
-        runRegularToppingsSelection();
-        runSauceSelection();
-        runToastSelection();
+        runSizeSelectionScreen();
+        runBreadSelectionScreen();
+        runMeatSelectionScreen();
+        runCheeseSelectionScreen();
+        runRegularToppingSelectionScreen();
+        runSauceSelectionScreen();
+        runToastSelectionScreen();
 
         // Show them what they built! at the end
         displaySandwichPreview();
@@ -1207,19 +1207,19 @@ public class UserInterface {
             }
 
             switch (choice) {
-                case "1" -> runSignatureToppingToggleEngine(); // Run specialized toggle utility below
+                case "1" -> runSignatureToppingToggleScreen(); // Run specialized toggle utility below
                 case "2" -> {
                     currentSandwich.clearSauces();
                     System.out.println("🍾 Current sauces wiped clean. Please select your new sauce layout:");
-                    runSauceSelection();
+                    runSauceSelectionScreen();
                 }
                 case "3" -> runExtraPremiumSelection("Meat");
                 case "4" -> runExtraPremiumSelection("Cheese");
-                case "5" -> runToastSelection();
+                case "5" -> runToastSelectionScreen();
             }
         }
     }
-    private void runSignatureToppingToggleEngine() {
+    private void runSignatureToppingToggleScreen() {
         List<Topping> standardVeggies = Arrays.asList(
                 new Topping("Lettuce", false), new Topping("Peppers", false),
                 new Topping("Tomatoes", false), new Topping("Onions", false),
@@ -1245,7 +1245,7 @@ public class UserInterface {
             currentSandwich.toggleTopping(chosen);
         }
     }
-    private void runSizeSelection() {
+    private void runSizeSelectionScreen() {
         System.out.println("\n➔ Select Sandwich Size:");
         System.out.println("[1] 4\" Sub\n[2] 8\" Sub\n[3] 12\" Sub");
         System.out.print("➔ Choice: ");
@@ -1258,7 +1258,7 @@ public class UserInterface {
         }
     }
 
-    private void runBreadSelection() {
+    private void runBreadSelectionScreen() {
         System.out.println("\n➔ Select Choice of Bread:");
         System.out.println("[1] White\n[2] Wheat\n[3] Rye\n[4] Wrap");
         System.out.print("➔ Choice: ");
@@ -1272,7 +1272,7 @@ public class UserInterface {
         });
     }
 
-    private void runMeatSelection() {
+    private void runMeatSelectionScreen() {
         System.out.println("\n➔ Select Premium Protein:");
         System.out.println("[1] Steak\n[2] Roast Beef\n[3] Turkey\n[4] Ham\n[5] Chicken\n[0] No Meat (Veggie)");
         System.out.print("➔ Choice: ");
@@ -1295,7 +1295,7 @@ public class UserInterface {
         runExtraPremiumSelection("Meat");
     }
 
-    private void runCheeseSelection() {
+    private void runCheeseSelectionScreen(){
         System.out.println("\n➔ Select Premium Cheese:");
         System.out.println("[1] American\n[2] Provolone\n[3] Cheddar\n[4] Swiss\n[0] No Cheese");
         System.out.print("➔ Choice: ");
@@ -1355,17 +1355,17 @@ public class UserInterface {
         System.out.println("➕ Extra " + extraIngredientName + " successfully appended.");
     }
 
-    private void runRegularToppingsSelection() {
+    private void runRegularToppingSelectionScreen() {
         List<Topping> standardVeggies = Arrays.asList(
                 new Topping("Lettuce", false), new Topping("Peppers", false),
                 new Topping("Tomatoes", false), new Topping("Onions", false),
                 new Topping("Cucumbers", false), new Topping("Pickles", false),
                 new Topping("Jalapenos", false), new Topping("Olives", false)
         );
-        runToppingIterationEngine( standardVeggies);
+        runToppingAdditionScreen(standardVeggies);
     }
 
-    private void runSauceSelection() {
+    private void runSauceSelectionScreen() {
         List<String> availableSauces = Arrays.asList(
                 "Mayo", "Mustard", "Ketchup", "Ranch", "Thousand Island", "Vinaigrette"
         );
@@ -1387,7 +1387,7 @@ public class UserInterface {
         }
     }
 
-    private void runToastSelection() {
+    private void runToastSelectionScreen() {
         System.out.println("\n➔ Do you want the sandwich toasted?");
         System.out.println("[1] Toast It!\n[2] Leave it Fresh/Cold");
         System.out.print("➔ Choice: ");
@@ -1398,15 +1398,15 @@ public class UserInterface {
     // ====== SIDES REFACTOR: CHIPS & DRINKS CONDENSED LOGIC ======
     private void runDrinkScreen() {
         String[] flavors = {"Cola", "Diet Cola", "Sprite", "Root Beer", "Mountain Dew", "Iced Tea"};
-        runSideMenuPipeline("Drink Flavor", flavors);
+        runSideSelectionScreen("Drink Flavor", flavors);
     }
 
     private void runChipsScreen() {
         String[] brands = {"Lays Classic", "Doritos Nacho Cheese", "Cheetos Flamin' Hot", "BBQ Kettle Chips"};
-        runSideMenuPipeline("Chip Brand", brands);
+        runSideSelectionScreen("Chip Brand", brands);
     }
 
-    private void runSideMenuPipeline(String typeTitle, String[] catalogOptions) {
+    private void runSideSelectionScreen(String typeTitle, String[] catalogOptions) {
         System.out.println("\n--- Available " + typeTitle + " Menu ---");
         for (int i = 0; i < catalogOptions.length; i++) {
             System.out.printf("[%d] %s%n", i + 1, catalogOptions[i]);
@@ -1441,7 +1441,7 @@ public class UserInterface {
         }
     }
 
-    private void runToppingIterationEngine( List<Topping> toppingsCatalog) {
+    private void runToppingAdditionScreen(List<Topping> toppingsCatalog) {
         System.out.println("\n--- Vegetable Selection ---");
         for (int i = 0; i < toppingsCatalog.size(); i++) {
             System.out.printf("[%d] Add %s%n", i + 1, toppingsCatalog.get(i).name());
