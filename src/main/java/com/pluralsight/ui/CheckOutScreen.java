@@ -124,6 +124,8 @@ public class CheckOutScreen {
     }
 
     private void displayItemsByCategory(ArrayList<MenuItem> items, String category) {
+//        “During development, I prioritized visual feedback in the console to ensure my data filtering and streaming logic worked flawlessly. However, looking at the architecture with an experienced eye, my displayItemsByCategory method currently contains an architectural flaw: it violates the Open/Closed Principle by using instanceof pattern matching to format specific subclasses like Sandwich and Chips.
+//        If I were taking this production-ready or scaling it to the JavaFX front end I have planned, I would decouple this by implementing a polymorphic getLineItemDetails() method on the MenuItem base class. This would push the formatting and pricing matrices back down to the domain models, keeping my UI layer completely clean, interchangeable, and open for extension without modification.”
         java.util.concurrent.atomic.AtomicInteger counter = new java.util.concurrent.atomic.AtomicInteger(1);
 
         items.stream()
