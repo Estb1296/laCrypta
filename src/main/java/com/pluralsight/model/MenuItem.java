@@ -1,6 +1,6 @@
 package com.pluralsight.model;
 
-public abstract class MenuItem implements Priceable{
+public abstract class MenuItem implements Priceable {
     private final String name;
     private final String description;
 
@@ -8,9 +8,11 @@ public abstract class MenuItem implements Priceable{
         this.name = name;
         this.description = description;
     }
+
     public String getFormattedPrice() {
         return String.format("$%.2f", getPrice());
     }
+
     public String getName() {
         return name;
     }

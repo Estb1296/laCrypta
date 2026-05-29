@@ -1,6 +1,7 @@
 package com.pluralsight.ui;
 
 import com.pluralsight.model.*;
+import com.pluralsight.ui.util.ConsoleColor;
 
 
 import java.util.Arrays;
@@ -37,25 +38,37 @@ public class SandwichBuilder {
 
     /**
      * Guide user through building a signature sandwich template with optional modifications.
-     * Returns the completed Sandwich object, or null if user cancelled.
+     * Returns the completed Sandwich object, or null if user canceled.
      */
     public Sandwich buildSignatureSandwich() {
-        System.out.println("\n--- 🌟 La Crypta Signature Sandwiches 🌟 ---");
-        System.out.println("[1] Classic BLT (Bacon, Cheddar, Ranch, Lettuce, Tomato on 8\" White)");
-        System.out.println("[2] Philly Cheese Steak (Steak, American, Mayo, Peppers on 8\" White)");
-        System.out.println("[0] Cancel / Go Back");
-        System.out.print("➔ Choose a Signature Sandwich: ");
+        System.out.println(ConsoleColor.BOLD + ConsoleColor.CYAN + "\n=========================================");
+        System.out.println("       🌟 LA CRYPTA SIGNATURES 🌟        ");
+        System.out.println("=========================================" + ConsoleColor.RESET);
+
+        // Classic BLT Option
+        System.out.println(ConsoleColor.YELLOW + "[1] Classic BLT" + ConsoleColor.RESET);
+        System.out.println(ConsoleColor.GRAY + "    └─ Bacon, Cheddar, Ranch, Lettuce, Tomato on 8\" White" + ConsoleColor.RESET);
+
+        // Philly Cheese Steak Option
+        System.out.println(ConsoleColor.PURPLE + "[2] Philly Cheese Steak" + ConsoleColor.RESET);
+        System.out.println(ConsoleColor.GRAY + "    └─ Steak, American, Mayo, Peppers on 8\" White" + ConsoleColor.RESET);
+
+        System.out.println(ConsoleColor.CYAN + "-----------------------------------------" + ConsoleColor.RESET);
+
+        // Exit / Go back Option
+        System.out.println(ConsoleColor.RED + "[0] Cancel / Go Back" + ConsoleColor.RESET);
+        System.out.print("\n➔ Choose a Signature Sandwich: ");
 
         String choice = runMenuAndGetChoice("[0-2]");
 
         if (choice.equals("0")) {
-            return null;  // ← User cancelled, caller will detect this
+            return null;  // ← User canceled, caller will detect this
         }
 
         Sandwich signatureSandwich = switch (choice) {
             case "1" -> new BLT();
             case "2" -> new PhillyCheeseSteak();
-            default  -> null;
+            default -> null;
         };
 
         if (signatureSandwich == null) {
@@ -84,6 +97,7 @@ public class SandwichBuilder {
      */
     private void runSignatureEditWorkflow() {
         while (true) {
+            displayLiveItemizedBuildProgress();
             System.out.println("\n--- 🛠️ Template Customization: " + currentSandwich.getName() + " ---");
             System.out.println("[1] Customize/Toggle Vegetables (Adds if missing, Removes if present)");
             System.out.println("[2] Rewrite Sauces (Clears current sauces and lets you choose fresh)");
@@ -111,60 +125,10 @@ public class SandwichBuilder {
             }
         }
     }
-
-    /**
-     * Display sandwich preview to user.
-     * Static method so caller can display before/after building.
-     */
-    public void displaySandwichPreview() {
-        System.out.println("\n=========================================");
-        System.out.println("       🥪 SANDWICH BUILD PREVIEW 🥪      ");
-        System.out.println("=========================================");
-        System.out.println("   Name:        " + currentSandwich.getName());
-        System.out.println("   Size:        " + currentSandwich.getSize());
-        System.out.println("   Bread:       " + currentSandwich.getBread());
-        System.out.println("   Toasted:     " + (currentSandwich.isToasted() ? "Yes 🔥" : "No ❄️"));
-        System.out.println("   Base Meat:   " + currentSandwich.getMeat());
-        System.out.println("   Base Cheese: " + currentSandwich.getCheese());
-
-        System.out.print("   Premium Extras: ");
-        if (currentSandwich.getExtraTopping().isEmpty()) {
-            System.out.println("None");
-        } else {
-            System.out.println();
-            currentSandwich.getExtraTopping().forEach(extra ->
-                    System.out.println("     • Extra " + extra.getName())
-            );
-        }
-
-        System.out.print("   Vegetables:  ");
-        if (currentSandwich.getToppings().isEmpty()) {
-            System.out.println("None");
-        } else {
-            System.out.println();
-            currentSandwich.getToppings().forEach(veg ->
-                    System.out.println("     • " + veg.name())
-            );
-        }
-
-        System.out.print("   Sauces:      ");
-        if (currentSandwich.getSauces().isEmpty()) {
-            System.out.println("None");
-        } else {
-            System.out.println();
-            currentSandwich.getSauces().forEach(sauce ->
-                    System.out.println("     • " + sauce)
-            );
-        }
-
-        System.out.println("-----------------------------------------");
-        System.out.printf("   Current Item Price: $%.2f%n", currentSandwich.calculatePrice());
-        System.out.println("=========================================");
-    }
-
     // ====== PRIVATE SELECTION SCREENS ======
 
     private void runSizeSelectionScreen() {
+        displayLiveItemizedBuildProgress();
         System.out.println("\n➔ Select Sandwich Size:");
         System.out.println("[1] 4\" Sub\n[2] 8\" Sub\n[3] 12\" Sub");
         System.out.print("➔ Choice: ");
@@ -178,6 +142,7 @@ public class SandwichBuilder {
     }
 
     private void runBreadSelectionScreen() {
+        displayLiveItemizedBuildProgress();
         System.out.println("\n➔ Select Choice of Bread:");
         System.out.println("[1] White\n[2] Wheat\n[3] Rye\n[4] Wrap");
         System.out.print("➔ Choice: ");
@@ -192,6 +157,7 @@ public class SandwichBuilder {
     }
 
     private void runMeatSelectionScreen() {
+        displayLiveItemizedBuildProgress();
         System.out.println("\n➔ Select Premium Protein:");
         System.out.println("[1] Steak\n[2] Roast Beef\n[3] Turkey\n[4] Ham\n[5] Chicken\n[0] No Meat (Veggie)");
         System.out.print("➔ Choice: ");
@@ -215,6 +181,7 @@ public class SandwichBuilder {
     }
 
     private void runCheeseSelectionScreen() {
+        displayLiveItemizedBuildProgress();
         System.out.println("\n➔ Select Premium Cheese:");
         System.out.println("[1] American\n[2] Provolone\n[3] Cheddar\n[4] Swiss\n[0] No Cheese");
         System.out.print("➔ Choice: ");
@@ -237,6 +204,7 @@ public class SandwichBuilder {
     }
 
     private void runExtraPremiumSelection(String type) {
+        displayLiveItemizedBuildProgress();
         System.out.println("\n➔ Would you like to add Extra " + type + "?");
         System.out.println("[1] Yes\n[2] No");
         System.out.print("➔ Choice: ");
@@ -256,7 +224,7 @@ public class SandwichBuilder {
                 case "1" -> "American";
                 case "2" -> "Provolone";
                 case "3" -> "Cheddar";
-                default  -> "Swiss";
+                default -> "Swiss";
             };
         } else {
             System.out.println("\n➔ Select Type of Extra Meat:");
@@ -267,20 +235,22 @@ public class SandwichBuilder {
                 case "2" -> "Roast Beef";
                 case "3" -> "Turkey";
                 case "4" -> "Ham";
-                default  -> "Chicken";
+                default -> "Chicken";
             };
         }
 
+        ExtraTopping.ExtraToppingSize extraToppingSize = currentSandwich.getSize().getExtraSize();
         ExtraTopping extra = new ExtraTopping(
                 extraIngredientName,
                 isCheese,
-                currentSandwich.getSize().getExtraSize()
+                extraToppingSize
         );
         currentSandwich.addExtraTopping(extra);
         System.out.println("➕ Extra " + extraIngredientName + " successfully appended.");
     }
 
     private void runRegularToppingSelectionScreen() {
+        displayLiveItemizedBuildProgress();
         List<Topping> standardVeggies = Arrays.asList(
                 new Topping("Lettuce", false), new Topping("Peppers", false),
                 new Topping("Tomatoes", false), new Topping("Onions", false),
@@ -334,6 +304,7 @@ public class SandwichBuilder {
     }
 
     private void runSauceSelectionScreen() {
+        displayLiveItemizedBuildProgress();
         List<String> availableSauces = Arrays.asList(
                 "Mayo", "Mustard", "Ketchup", "Ranch", "Thousand Island", "Vinaigrette"
         );
@@ -356,6 +327,7 @@ public class SandwichBuilder {
     }
 
     private void runToastSelectionScreen() {
+        displayLiveItemizedBuildProgress();
         System.out.println("\n➔ Do you want the sandwich toasted?");
         System.out.println("[1] Toast It!\n[2] Leave it Fresh/Cold");
         System.out.print("➔ Choice: ");
@@ -373,5 +345,81 @@ public class SandwichBuilder {
             }
             System.out.print("⚠️ Invalid entry. Please read options and retry: ");
         }
+    }
+
+
+    public void displayLiveItemizedBuildProgress() {
+        System.out.println(ConsoleColor.BOLD + ConsoleColor.CYAN + "\n=========================================");
+        System.out.println("       🚧 LIVE KIOSK CART STATUS 🚧       ");
+        System.out.println("=========================================" + ConsoleColor.RESET);
+
+        // 1. Structural Layer (Null-safe)
+        String sizeStr = (currentSandwich.getSize() != null) ? currentSandwich.getSize().getDisplay() : "Pending Size...";
+        String breadStr = (currentSandwich.getBread() != null) ? currentSandwich.getBread() : "Pending Bread...";
+
+        System.out.printf("   Configuration: %s %s\n", sizeStr, breadStr);
+
+        // Dynamic Size/Bread Cost Line Item
+        if (currentSandwich.getSize() != null) {
+            System.out.printf("   ◦ Base Sub Layout:                   $%5.2f\n", currentSandwich.getSize().getPrice());
+        }
+
+        System.out.println(ConsoleColor.CYAN + "   -------------------------------------" + ConsoleColor.RESET);
+        System.out.println(ConsoleColor.BOLD + "   [CURRENT INCLUSIONS & COSTS]" + ConsoleColor.RESET);
+
+        // 2. Core Meat & Cheese Values (Dynamically pulling from your model's formula rules)
+        if (currentSandwich.getMeat() != null && !currentSandwich.getMeat().equalsIgnoreCase("None")) {
+            double meatPremium = 0.0;
+            switch (currentSandwich.getSize()) {
+                case FOUR -> meatPremium = 1.00;   // Matches MEAT_PREMIUM_FOUR
+                case EIGHT -> meatPremium = 2.00;  // Matches MEAT_PREMIUM_EIGHT
+                case TWELVE -> meatPremium = 3.00; // Matches MEAT_PREMIUM_TWELVE
+            }
+            System.out.printf("   ◦ Core Protein: %-18s +$%5.2f\n", currentSandwich.getMeat(), meatPremium);
+        }
+
+        if (currentSandwich.getCheese() != null && !currentSandwich.getCheese().equalsIgnoreCase("None")) {
+            double cheesePremium = 0.0;
+            switch (currentSandwich.getSize()) {
+                case FOUR -> cheesePremium = 1.00;   // Matches CHEESE_PREMIUM_FOUR
+                case EIGHT -> cheesePremium = 2.00;  // Matches CHEESE_PREMIUM_EIGHT
+                case TWELVE -> cheesePremium = 3.00; // Matches CHEESE_PREMIUM_TWELVE
+            }
+            System.out.printf("   ◦ Core Cheese:  %-18s +$%5.2f\n", currentSandwich.getCheese(), cheesePremium);
+        }
+
+        // 3. Dynamic Extra Premium Upgrades (Leave this loop exactly as you had it!)
+        if (!currentSandwich.getExtraTopping().isEmpty()) {
+            for (MenuItem item : currentSandwich.getExtraTopping()) {
+                if (item instanceof ExtraTopping extra) {
+                    String color = extra.isCheese() ? ConsoleColor.YELLOW : ConsoleColor.PURPLE;
+                    System.out.printf(color + "   + Extra %-5s: %-18s +$%5.2f\n" + ConsoleColor.RESET,
+                            extra.isCheese() ? "Chs" : "Meat",
+                            extra.getName(),
+                            extra.calculatePrice()
+                    );
+                }
+            }
+        }
+
+        // 4. Free Veggies & Condiments (Leave this as you had it!)
+        if (!currentSandwich.getToppings().isEmpty()) {
+            for (Topping topping : currentSandwich.getToppings()) {
+                System.out.printf("   ◦ Veggie:       %-18s  $0.00\n", topping.name());
+            }
+        }
+        if (!currentSandwich.getSauces().isEmpty()) {
+            for (String sauce : currentSandwich.getSauces()) {
+                System.out.printf("   ◦ Sauce:        %-18s  $0.00\n", sauce);
+            }
+        }
+
+        System.out.println(ConsoleColor.CYAN + "   -------------------------------------" + ConsoleColor.RESET);
+
+        // 5. Dynamic Mathematical Total Updating in Real Time
+        System.out.printf(ConsoleColor.BOLD + ConsoleColor.GREEN + "   CURRENT RUNNING TOTAL:              $%5.2f\n" + ConsoleColor.RESET,
+                currentSandwich.calculatePrice()
+        );
+        System.out.println(ConsoleColor.BOLD + ConsoleColor.CYAN + "=========================================\n" + ConsoleColor.RESET);
     }
 }

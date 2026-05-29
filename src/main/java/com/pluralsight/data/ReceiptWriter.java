@@ -18,6 +18,7 @@ public class ReceiptWriter {
 
     /**
      * Generates and saves a receipt file for a completed order
+     *
      * @param order The completed order
      * @return The filename of the saved receipt
      * @throws IOException If file writing fails
@@ -114,6 +115,7 @@ public class ReceiptWriter {
             receipt.append("\n");
         }
     }
+
     /**
      * Creates the folder structure for today's receipts
      * Creates: receipts/2026-01-15/ (if it doesn't exist)

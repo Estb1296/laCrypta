@@ -1,7 +1,7 @@
 package com.pluralsight.model;
 
-public class BLT extends Sandwich{
-    public BLT(){
+public class BLT extends Sandwich {
+    public BLT() {
         super("BLT", SandwichSize.EIGHT, "White", true);
         this.setMeat("Bacon");
         this.setCheese("Cheddar");

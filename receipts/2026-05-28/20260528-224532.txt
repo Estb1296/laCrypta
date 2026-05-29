@@ -1,0 +1,31 @@
+╔════════════════════════════════════╗
+║         SANDWICH SHOP RECEIPT      ║
+╚════════════════════════════════════╝
+
+Date & Time: 20260528-224532
+════════════════════════════════════
+
+ORDER DETAILS:
+────────────────────────────────────
+
+SANDWICHS:
+1) 8" Wheat Sandwich (Toasted) - TOASTED - $12.50
+   Sandwich Specifications:
+  • Size: 8"
+  • Bread: Wheat
+  • Meat: Turkey
+  • Cheese: American
+  • Toasted: Yes
+  • Regular Toppings: None
+  • Premium Toppings: None
+  • Sauces: Ranch, Vinaigrette
+
+
+════════════════════════════════════
+SUBTOTAL: $12.50
+TAX (0%%): $0.00
+TOTAL: $12.50
+════════════════════════════════════
+
+Thank you for your order!
+Please come again soon!

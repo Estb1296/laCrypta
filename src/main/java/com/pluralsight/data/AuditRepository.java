@@ -1,11 +1,16 @@
 package com.pluralsight.data;
+
+import com.pluralsight.model.AuditLog;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-public class AuditLogger {
+
+public class AuditRepository {
     private static final String LOGS_FOLDER = "logs/";
+
     /**
      * Logs audit information to daily audit file
      */
@@ -26,6 +31,7 @@ public class AuditLogger {
     /**
      * Creates the folder structure for today's audit logs
      * Creates: logs/2026-01-15/ (if it doesn't exist)
+     *
      * @return The folder path
      */
     private String createAndGetFolderPath() {

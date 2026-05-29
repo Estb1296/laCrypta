@@ -3,11 +3,17 @@ package com.pluralsight.model;
 public class ExtraTopping extends MenuItem {
     private final ExtraToppingSize size;
     private final boolean isCheese;
+
     public ExtraTopping(String name, boolean isCheese, ExtraToppingSize size) {
         super(name, "Extra Topping");
         this.size = size;
         this.isCheese = isCheese;
     }
+
+    public boolean isCheese() {
+        return this.isCheese;
+    }
+
     public enum ExtraToppingSize {
         FOUR(0.50),
         EIGHT(1.00),

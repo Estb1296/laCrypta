@@ -1,8 +1,8 @@
-
 package com.pluralsight.ui;
 
 import com.pluralsight.data.OrderRepository;
 import com.pluralsight.model.*;
+import com.pluralsight.ui.util.ConsoleColor;
 
 import java.io.IOException;
 
@@ -23,6 +23,7 @@ public class UserInterface {
      * Entry point: Displays home screen and routes user through the app.
      */
     public void runHomeScreen() {
+        displayWelcomeBanner();
         while (true) {
             displayHomeMenu();
             String choice = runMenuAndGetChoice("[1-2Xx]");
@@ -50,14 +51,13 @@ public class UserInterface {
         if (choice.equals("1")) {
             try {
                 this.orderRepository.logOrderStart();
-                System.out.println("🚀 New session initialized. Token logged to audit registry.");
+                System.out.println(ConsoleColor.YELLOW + "🚀 New session initialized. Token logged to audit registry." + ConsoleColor.RESET);
                 this.currentOrder = new Order();
                 runOrderMenuScreen();
             } catch (IOException e) {
-                System.out.println("⚠️ System Error: Unable to register new order session state: " + e.getMessage());
+                System.out.println(ConsoleColor.RED + "⚠️ System Error: " + e.getMessage() + ConsoleColor.RESET);
             }
-        }
-        else if(choice.equals("2")){
+        } else if (choice.equals("2")) {
             new AdminUserInterface(this.orderRepository);
         }
     }
@@ -86,7 +86,7 @@ public class UserInterface {
             // Handle checkout
             if (choice.equals("5")) {  // ✅ FIXED: Now checks for [5] Checkout & Pay
                 if (currentOrder.getItems().isEmpty()) {
-                    System.out.println("\n❌ Your cart is empty! Add items before checkout.\n");
+                    System.out.println(ConsoleColor.BOLD + ConsoleColor.RED + "\n❌ Your cart is empty! Add items before checkout.\n" + ConsoleColor.RESET);
                     continue;  // Stay in order menu
                 }
 
@@ -137,7 +137,7 @@ public class UserInterface {
         Sandwich builtSandwich = sandwichBuilder.buildCustomSandwich();
 
         // Step 2: Show preview
-        sandwichBuilder.displaySandwichPreview();
+        sandwichBuilder.displayLiveItemizedBuildProgress();
 
         // Step 3: Confirm with user before adding
         System.out.println("[1] Confirm & Add to Cart\n[0] Scrap Build & Cancel");
@@ -147,9 +147,9 @@ public class UserInterface {
         // Step 4: Add to order OR discard
         if (finalDecision.equals("1")) {
             currentOrder.addItem(builtSandwich);
-            System.out.println("\n✅ Custom Sandwich successfully added to your running order tray!");
+            System.out.println("\n" + ConsoleColor.GREEN + "✅ Custom Sandwich successfully added to your running order tray!" + ConsoleColor.RESET);
         } else {
-            System.out.println("\n❌ Sandwich configuration discarded.");
+            System.out.println("\n" + ConsoleColor.RED + "❌ Sandwich configuration discarded." + ConsoleColor.RESET);
         }
     }
 
@@ -168,7 +168,7 @@ public class UserInterface {
         }
 
         // Step 3: Show preview
-        sandwichBuilder.displaySandwichPreview();
+        sandwichBuilder.displayLiveItemizedBuildProgress();
 
         // Step 4: Confirm with user
         System.out.println("[1] Confirm & Add Signature to Cart\n[0] Scrap Build & Cancel");
@@ -236,7 +236,7 @@ public class UserInterface {
         }
 
         currentOrder.addItem(sideItem);
-        System.out.println("✅ Added " + selectedName + " to cart!");
+        System.out.println(ConsoleColor.GREEN + "✅ Added " + selectedName + " to cart!" + ConsoleColor.RESET);
     }
 
     /**
@@ -248,9 +248,10 @@ public class UserInterface {
             if (input.matches(regexBounds)) {
                 return input;
             }
-            System.out.print("⚠️ Invalid entry. Please read options and retry: ");
+            System.out.print(ConsoleColor.BOLD + ConsoleColor.RED + "⚠️ Invalid entry. Please read options and retry: " + ConsoleColor.RESET);
         }
     }
+
     private String askForSize() {
         System.out.println("\n--- Select Size ---");
         System.out.println("[1] Small");
@@ -275,5 +276,22 @@ public class UserInterface {
                 return null; // User typed 0 or canceled
             }
         }
+    }
+
+    private void displayWelcomeBanner() {
+        System.out.println(ConsoleColor.BOLD + ConsoleColor.CYAN);
+        System.out.println("  _______________________________________________  ");
+        System.out.println(" /                                               \\ ");
+        System.out.println(" |   _     _____   ____   ____  _   _ _____ _____ | ");
+        System.out.println(" |  | |   |  _  | |  __| |  _ \\| | | |_   _|  _  || ");
+        System.out.println(" |  | |___|     | | |___ |     | |_| | | | |     || ");
+        System.out.println(" |  |_____|_|\\__| |____| |_|\\_\\|_____| |_| |_|\\_||| ");
+        System.out.println(" \\_______________________________________________/ ");
+        System.out.println("     (@@)  (@@)  (@@)  (@@)  (@@)  (@@)  (@@)      ");
+        System.out.println("   =============================================   ");
+        System.out.println("   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   ");
+        System.out.println("   [===========================================]   ");
+        System.out.println("               ~ Underground Subs ~                ");
+        System.out.print(ConsoleColor.RESET);
     }
 }

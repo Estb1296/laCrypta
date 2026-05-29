@@ -2,7 +2,7 @@ package com.pluralsight.model;
 
 import java.util.ArrayList;
 
-public class Order extends MenuItem implements Priceable{
+public class Order extends MenuItem implements Priceable {
     private final ArrayList<MenuItem> items;
 
     private double total;
@@ -18,13 +18,16 @@ public class Order extends MenuItem implements Priceable{
         items.add(item);
         total += item.getPrice();
     }
+
     public ArrayList<MenuItem> getItems() {
         return items;
     }
+
     @Override
     public double getPrice() {
         return total;
     }
+
     public void removeItem(int index) {
         if (index >= 0 && index < items.size()) {
             total -= items.get(index).getPrice();
@@ -38,10 +41,11 @@ public class Order extends MenuItem implements Priceable{
         this.couponDiscount = 0.0;
     }
 
-        // Hidden matching key
+    // Hidden matching key
     public boolean isValidPromoCode(String userCode) {
-    return userCode.equals("Craig26@");
+        return userCode.equals("Craig26@");
     }
+
     public void setCouponDiscountAmount(double amount) {
         this.couponDiscount = amount;
     }
@@ -49,6 +53,7 @@ public class Order extends MenuItem implements Priceable{
     public double getCouponDiscount() {
         return this.couponDiscount;
     }
+
     @Override
     public double calculatePrice() {
         double subtotal = 0.0;
@@ -58,6 +63,7 @@ public class Order extends MenuItem implements Priceable{
         double finalTotal = subtotal - couponDiscount;
         return Math.max(0.0, finalTotal); // Keeps total at or above $0.00
     }
+
     @Override
     public String toReceiptLine() {
         return "Order Total: $" + String.format("%.2f", total);

@@ -3,6 +3,7 @@ package com.pluralsight.ui;
 import com.pluralsight.data.OrderRepository;
 
 import com.pluralsight.model.*;
+import com.pluralsight.ui.util.ConsoleColor;
 import com.pluralsight.ui.util.InputValidator;
 
 import java.io.IOException;
@@ -15,11 +16,13 @@ public class CheckOutScreen {
     private final Scanner input;
     private final OrderRepository orderRepository;
     private boolean hasUsedPromo = false;
+
     public CheckOutScreen(Order currentOrder, OrderRepository orderRepository, Scanner input) {
         this.currentOrder = currentOrder;
         this.orderRepository = orderRepository;
         this.input = input;
     }
+
     public String display() {
         while (true) {
             displayOrderSummary();
@@ -29,7 +32,7 @@ public class CheckOutScreen {
             System.out.println("4) Apply Custom Dollar Coupon");
             System.out.println("0) Cancel Order");
 
-        int choice = InputValidator.getValidIntegerInput(input, "Enter choice: ", 0, 4);
+            int choice = InputValidator.getValidIntegerInput(input, "Enter choice: ", 0, 4);
 
 
             switch (choice) {
@@ -52,8 +55,9 @@ public class CheckOutScreen {
                 }
                 default -> System.out.println("Invalid choice");
             }
+        }
     }
-    }
+
     private void handlePromoCodeWorkflow() {
         // 🛑 Rule Check: Have they already used a code?
         if (hasUsedPromo) {
@@ -97,7 +101,7 @@ public class CheckOutScreen {
     }
 
     private void displayOrderSummary() {
-        System.out.println("\n========== ORDER SUMMARY ==========");
+        System.out.println(ConsoleColor.CYAN+"\n========== ORDER SUMMARY =========="+ConsoleColor.RESET);
         ArrayList<MenuItem> items = currentOrder.getItems();
 
         if (items.isEmpty()) {
@@ -120,31 +124,76 @@ public class CheckOutScreen {
     }
 
     private void displayItemsByCategory(ArrayList<MenuItem> items, String category) {
-        // We use a regular integer now since a sequential stream loop doesn't require concurrency safety
-        //I'm passing by reference by using a pointer to be able to compile item as a mutable object which can't be done in streams
         java.util.concurrent.atomic.AtomicInteger counter = new java.util.concurrent.atomic.AtomicInteger(1);
 
-        //Filter and process using forEach for good optimization
         items.stream()
-                .filter(item -> item.getCategory().equalsIgnoreCase(category)) // Uses my abstract getCategory() method seamlessly!
+                .filter(item -> item.getCategory().equalsIgnoreCase(category))
                 .forEach(item -> {
-                    // Print the item dynamically
-                    System.out.println(" " + counter.getAndIncrement() + ") " + item.getName() + " - $" + String.format("%.2f", item.getPrice()));
+                    // 1. Print the item line-item dynamically (Bold name, plain price)
+                    System.out.println(" " + counter.getAndIncrement() + ") " + ConsoleColor.BOLD + item.getName() + ConsoleColor.RESET + " - $" + String.format("%.2f", item.calculatePrice()));
 
-                    // Use Java Pattern Matching to cleanly
+                    // 2. Pattern Match for Sandwich to break down Steak & Cheese Costs!
                     if (item instanceof Sandwich sandwich) {
-                        System.out.println(sandwich.getDescription());
+                        // 🥪 Base Sub Layout Price
+                        if (sandwich.getSize() != null) {
+                            System.out.printf(ConsoleColor.GRAY + "       ◦ Base Sub Layout:           $%5.2f\n" + ConsoleColor.RESET,
+                                    sandwich.getSize().getPrice());
+                        }
+
+                        // 🥩 Core Protein Dynamic Cost Breakdown
+                        if (sandwich.getMeat() != null && !sandwich.getMeat().equalsIgnoreCase("None")) {
+                            double meatCost = switch (sandwich.getSize()) {
+                                case FOUR -> 1.00;
+                                case EIGHT -> 2.00;
+                                case TWELVE -> 3.00;
+                            };
+                            System.out.printf(ConsoleColor.PURPLE + "       ◦ Core Protein: %-13s +$%5.2f\n" + ConsoleColor.RESET,
+                                    sandwich.getMeat(), meatCost);
+                        }
+
+                        // 🧀 Core Cheese Dynamic Cost Breakdown
+                        if (sandwich.getCheese() != null && !sandwich.getCheese().equalsIgnoreCase("None")) {
+                            double cheeseCost = switch (sandwich.getSize()) {
+                                case FOUR -> 1.00;
+                                case EIGHT -> 2.00;
+                                case TWELVE -> 3.00;
+                            };
+                            System.out.printf(ConsoleColor.YELLOW + "       ◦ Core Cheese:  %-13s +$%5.2f\n" + ConsoleColor.RESET,
+                                    sandwich.getCheese(), cheeseCost);
+                        }
+
+                        // 🚀 Extra Premium Additions
+                        if (!sandwich.getExtraTopping().isEmpty()) {
+                            sandwich.getExtraTopping().forEach(extra -> {
+                                String color = extra.isCheese() ? ConsoleColor.YELLOW : ConsoleColor.PURPLE;
+                                System.out.printf(color + "       + Extra %s: %-15s +$%5.2f\n" + ConsoleColor.RESET,
+                                        extra.isCheese() ? "Chs" : "Meat", extra.getName(), extra.calculatePrice());
+                            });
+                        }
+
+                        // 🥬 Free Veggies & Sauces Grouped Cleanly
+                        if (!sandwich.getToppings().isEmpty()) {
+                            System.out.printf(ConsoleColor.GREEN + "       ◦ Veggies: %s\n" + ConsoleColor.RESET,
+                                    String.join(", ", sandwich.getToppings().stream()
+                                            .map(Topping::name) // 🚀 Super clean and concise!
+                                            .toList()));
+                        }
+                        if (!sandwich.getSauces().isEmpty()) {
+                            System.out.printf(ConsoleColor.CYAN + "       ◦ Sauces:  %s\n" + ConsoleColor.RESET,
+                                    String.join(", ", sandwich.getSauces()));
+                        }
                     }
-                    if(item instanceof Chips chips){
-                        System.out.println(chips.getDescription());
+
+                    // Keep your standard descriptions for other items intact
+                    if (item instanceof Chips chips) {
+                        System.out.println(ConsoleColor.GRAY + "       " + chips.getDescription() + ConsoleColor.RESET);
                     }
-                    if(item instanceof Drink drink){
-                        System.out.println(drink.getDescription());
+                    if (item instanceof Drink drink) {
+                        System.out.println(ConsoleColor.GRAY + "       " + drink.getDescription() + ConsoleColor.RESET);
                     }
                 });
-
-        //If the counter never incremented, nothing matched this category
     }
+
     private void removeItemFromCart() {
         ArrayList<MenuItem> items = currentOrder.getItems();
 
@@ -169,19 +218,20 @@ public class CheckOutScreen {
         }
 
         // targetIndex is guaranteed to be safe and already converted to a 0-based index!
-            MenuItem removedItem = items.get(targetIndex);
-            String removedName = removedItem.getName();
-            double removedPrice = removedItem.getPrice();
+        MenuItem removedItem = items.get(targetIndex);
+        String removedName = removedItem.getName();
+        double removedPrice = removedItem.getPrice();
 
         // Remove the item using the safe index
-            currentOrder.removeItem(targetIndex);
+        currentOrder.removeItem(targetIndex);
 
         // Show confirmation
-            System.out.println("\n✅ ITEM REMOVED:");
-            System.out.println("   Removed: " + removedName + " (-$" + String.format("%.2f", removedPrice) + ")");
-            System.out.println("   New Cart Total: $" + String.format("%.2f", currentOrder.calculatePrice()));
-            System.out.println("   Items Remaining: " + currentOrder.getItems().size() + "\n");
+        System.out.println("\n✅ ITEM REMOVED:");
+        System.out.println("   Removed: " + removedName + " (-$" + String.format("%.2f", removedPrice) + ")");
+        System.out.println("   New Cart Total: $" + String.format("%.2f", currentOrder.calculatePrice()));
+        System.out.println("   Items Remaining: " + currentOrder.getItems().size() + "\n");
     }
+
     private void completeCheckout() {
         double total = currentOrder.calculatePrice();
         System.out.println("\n========== CHECKOUT ==========");

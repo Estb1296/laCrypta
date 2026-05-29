@@ -1,13 +1,16 @@
 package com.pluralsight.data;
 
+import com.pluralsight.model.AuditLog;
 import com.pluralsight.model.Order;
+import com.pluralsight.ui.util.ConsoleColor;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class OrderRepository {
     private final ArrayList<Order> orders;
     private final ReceiptWriter receiptWriter;
-    private final AuditLogger auditLogger;
+    private final AuditRepository auditRepository;
     private final ArrayList<AuditLog> auditLogs;
 
     /**
@@ -17,7 +20,7 @@ public class OrderRepository {
         this.orders = new ArrayList<>();
         this.auditLogs = new ArrayList<>();
         this.receiptWriter = new ReceiptWriter();
-        this.auditLogger = new AuditLogger();
+        this.auditRepository = new AuditRepository();
     }
 
     /**
@@ -37,7 +40,11 @@ public class OrderRepository {
                 "Receipt: " + receiptFilename
         );
         auditLogs.add(auditLog);
-        auditLogger.logAudit(auditLog);
+        try {
+            auditRepository.logAudit(auditLog);
+        } catch (IOException e) {
+            System.out.println(ConsoleColor.BOLD + ConsoleColor.YELLOW + "⚠️ Warning: System couldn't write to audit-log file, but checkout was preserved." + ConsoleColor.RESET);
+        }
 
         // Store the order in history
         orders.add(order);
@@ -58,7 +65,7 @@ public class OrderRepository {
         );
         auditLogs.add(auditLog);
 
-        auditLogger.logAudit(auditLog);
+        auditRepository.logAudit(auditLog);
     }
 
     /**
@@ -67,6 +74,7 @@ public class OrderRepository {
     public ArrayList<Order> getAllOrders() {
         return new ArrayList<>(orders);
     }
+
     public ArrayList<AuditLog> getAllAuditLogs() {
         return new ArrayList<>(auditLogs); // Returns a safe copy of the logs list
     }
@@ -101,6 +109,7 @@ public class OrderRepository {
     private String generateOrderID() {
         return "ORD-" + System.currentTimeMillis();
     }
+
     public void logCancelledOrder(Order order) {
         AuditLog cancelLog = new AuditLog(
                 "ORD-" + System.currentTimeMillis(),
@@ -110,14 +119,16 @@ public class OrderRepository {
                 "User explicitly aborted cart with items inside."
         );
         try {
-            auditLogger.logAudit(cancelLog);
+            auditRepository.logAudit(cancelLog);
         } catch (IOException e) {
             throw new RuntimeException("The order wasn't properly tracked.");
         }
         auditLogs.add(cancelLog); // Saves it to cache for Option 6 in admin panel!
     }
+
     /**
      * Search and retrieve the contents of all receipts inside a specific date folder
+     *
      * @param folderName The name of the directory (e.g., "20260528")
      * @return List of strings containing receipt text content
      */

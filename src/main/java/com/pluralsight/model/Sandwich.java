@@ -35,6 +35,7 @@ public class Sandwich extends MenuItem {
         this.isToasted = isToasted;
         this.toppings = new ArrayList<>();
     }
+
     public Sandwich(SandwichSize size, String bread, boolean isToasted) {
         this("Signature Menu Item", size, bread, isToasted);
     }
@@ -48,20 +49,21 @@ public class Sandwich extends MenuItem {
         private final double price;
         private final ExtraTopping.ExtraToppingSize extraSize;
 
+
         SandwichSize(String display, double price, ExtraTopping.ExtraToppingSize extraSize) {
             this.display = display;
             this.price = price;
-            this.extraSize = extraSize;
+            this.extraSize=extraSize;
         }
-
+        public ExtraTopping.ExtraToppingSize getExtraSize() {
+            return extraSize;
+        }
         public String getDisplay() {
             return display;
         }
 
 
-        public ExtraTopping.ExtraToppingSize getExtraSize() {
-            return extraSize;
-        }
+
 
         public double getPrice() {
             return price;
@@ -197,6 +199,7 @@ public class Sandwich extends MenuItem {
             // No price mutation here — calculatePrice() handles it
         }
     }
+
     /**
      * NEW UTILITY: Toggles a topping by name.
      * If it's already on the signature template, it removes it.
@@ -213,8 +216,9 @@ public class Sandwich extends MenuItem {
             System.out.println("➕ Added: " + topping.name() + " to template.");
         }
     }
+
     // Clear all sauces so the user can rewrite them from scratch
-    public void clearSauces(){
+    public void clearSauces() {
         this.sauces.clear();
     }
 
