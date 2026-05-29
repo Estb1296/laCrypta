@@ -1,4 +1,4 @@
-# 🥖 laCrypta — DELI-cious POS System
+# 🥖 laCrypta — Sandwich POS System
  
 A Java console-based point-of-sale application for **La-Crypta**, a custom sandwich shop.
 Customers can fully build their own sandwich orders, add drinks and chips, apply promo codes,
@@ -273,11 +273,159 @@ public void toggleTopping(Topping topping) {
 If the topping is already on the sandwich, it removes it; if it's missing, it adds it.
 One method handles both directions — no branching logic needed in the UI layer.
 ``---`
-## Note: need to add more images of code
+## 💎 Interesting Code - grouping items on receipt 
 ```
- 
+ ```
+    private void displayItemsByCategory(ArrayList<MenuItem> items, String category) {
+        java.util.concurrent.atomic.AtomicInteger counter = new java.util.concurrent.atomic.AtomicInteger(1);
+
+        items.stream()
+                .filter(item -> item.getCategory().equalsIgnoreCase(category))
+                .forEach(item -> {
+                    // 1. Print the item line-item dynamically (Bold name, plain price)
+                    System.out.println(" " + counter.getAndIncrement() + ") " + ConsoleColor.BOLD + item.getName() + ConsoleColor.RESET + " - $" + String.format("%.2f", item.calculatePrice()));
+
+                    // 2. Pattern Match for Sandwich to break down Steak & Cheese Costs!
+                    if (item instanceof Sandwich sandwich) {
+                        // 🥪 Base Sub Layout Price
+                        if (sandwich.getSize() != null) {
+                            System.out.printf(ConsoleColor.GRAY + "       ◦ Base Sub Layout:           $%5.2f\n" + ConsoleColor.RESET,
+                                    sandwich.getSize().getPrice());
+                        }
+
+                        // 🥩 Core Protein Dynamic Cost Breakdown
+                        if (sandwich.getMeat() != null && !sandwich.getMeat().equalsIgnoreCase("None")) {
+                            double meatCost = switch (sandwich.getSize()) {
+                                case FOUR -> 1.00;
+                                case EIGHT -> 2.00;
+                                case TWELVE -> 3.00;
+                            };
+                            System.out.printf(ConsoleColor.PURPLE + "       ◦ Core Protein: %-13s +$%5.2f\n" + ConsoleColor.RESET,
+                                    sandwich.getMeat(), meatCost);
+                        }
+
+                        // 🧀 Core Cheese Dynamic Cost Breakdown
+                        if (sandwich.getCheese() != null && !sandwich.getCheese().equalsIgnoreCase("None")) {
+                            double cheeseCost = switch (sandwich.getSize()) {
+                                case FOUR -> 1.00;
+                                case EIGHT -> 2.00;
+                                case TWELVE -> 3.00;
+                            };
+                            System.out.printf(ConsoleColor.YELLOW + "       ◦ Core Cheese:  %-13s +$%5.2f\n" + ConsoleColor.RESET,
+                                    sandwich.getCheese(), cheeseCost);
+                        }
+
+                        // 🚀 Extra Premium Additions
+                        if (!sandwich.getExtraTopping().isEmpty()) {
+                            sandwich.getExtraTopping().forEach(extra -> {
+                                String color = extra.isCheese()? ConsoleColor.YELLOW: ConsoleColor.PURPLE;
+                                System.out.printf(color + "       + Extra %s: %-15s +$%5.2f\n" + ConsoleColor.RESET,
+                                        extra.isCheese() ? "Chs": "Meat", extra.getName(), extra.calculatePrice());
+                            });
+                        }
+
+                        // 🥬 Free Veggies & Sauces Grouped Cleanly
+                        if (!sandwich.getToppings().isEmpty()) {
+                            System.out.printf(ConsoleColor.GREEN + "       ◦ Veggies: %s\n" + ConsoleColor.RESET,
+                                    String.join(", ", sandwich.getToppings().stream()
+                                            .map(Topping::name) // 🚀 Super clean and concise!
+                                            .toList()));
+                        }
+                        if (!sandwich.getSauces().isEmpty()) {
+                            System.out.printf(ConsoleColor.CYAN + "       ◦ Sauces:  %s\n" + ConsoleColor.RESET,
+                                    String.join(", ", sandwich.getSauces()));
+                        }
+                    }
+
+                    // Keep your standard descriptions for other items intact
+                    if (item instanceof Chips chips) {
+                        System.out.println(ConsoleColor.GRAY + "       " + chips.getDescription() + ConsoleColor.RESET);
+                    }
+                    if (item instanceof Drink drink) {
+                        System.out.println(ConsoleColor.GRAY + "       " + drink.getDescription() + ConsoleColor.RESET);
+                    }
+                });
+    }
+```
 ---
- 
+```
+## ⛓️ Interesting Code - Live Sandwich Status
+```
+    public void displayLiveItemizedBuildProgress() {
+        System.out.println(ConsoleColor.BOLD + ConsoleColor.CYAN + "\n=========================================");
+        System.out.println("       🚧 LIVE KIOSK CART STATUS 🚧       ");
+        System.out.println("=========================================" + ConsoleColor.RESET);
+
+        // 1. Structural Layer (Null-safe)
+        String sizeStr = (currentSandwich.getSize() != null) ? currentSandwich.getSize().getDisplay() : "Pending Size...";
+        String breadStr = (currentSandwich.getBread() != null) ? currentSandwich.getBread() : "Pending Bread...";
+
+        System.out.printf("   Configuration: %s %s\n", sizeStr, breadStr);
+
+        // Dynamic Size/Bread Cost Line Item
+        if (currentSandwich.getSize() != null) {
+            System.out.printf("   ◦ Base Sub Layout:                   $%5.2f\n", currentSandwich.getSize().getPrice());
+        }
+
+        System.out.println(ConsoleColor.CYAN + "   -------------------------------------" + ConsoleColor.RESET);
+        System.out.println(ConsoleColor.BOLD + "   [CURRENT INCLUSIONS & COSTS]" + ConsoleColor.RESET);
+
+        // 2. Core Meat & Cheese Values (Dynamically pulling from your model's formula rules)
+        if (currentSandwich.getMeat() != null && !currentSandwich.getMeat().equalsIgnoreCase("None")) {
+            double meatPremium = 0.0;
+            switch (currentSandwich.getSize()) {
+                case FOUR -> meatPremium = 1.00;   // Matches MEAT_PREMIUM_FOUR
+                case EIGHT -> meatPremium = 2.00;  // Matches MEAT_PREMIUM_EIGHT
+                case TWELVE -> meatPremium = 3.00; // Matches MEAT_PREMIUM_TWELVE
+            }
+            System.out.printf("   ◦ Core Protein: %-18s +$%5.2f\n", currentSandwich.getMeat(), meatPremium);
+        }
+
+        if (currentSandwich.getCheese() != null && !currentSandwich.getCheese().equalsIgnoreCase("None")) {
+            double cheesePremium = 0.0;
+            switch (currentSandwich.getSize()) {
+                case FOUR -> cheesePremium = 1.00;   // Matches CHEESE_PREMIUM_FOUR
+                case EIGHT -> cheesePremium = 2.00;  // Matches CHEESE_PREMIUM_EIGHT
+                case TWELVE -> cheesePremium = 3.00; // Matches CHEESE_PREMIUM_TWELVE
+            }
+            System.out.printf("   ◦ Core Cheese:  %-18s +$%5.2f\n", currentSandwich.getCheese(), cheesePremium);
+        }
+
+        // 3. Dynamic Extra Premium Upgrades (Leave this loop exactly as you had it!)
+        if (!currentSandwich.getExtraTopping().isEmpty()) {
+            for (MenuItem item : currentSandwich.getExtraTopping()) {
+                if (item instanceof ExtraTopping extra) {
+                    String color = extra.isCheese() ? ConsoleColor.YELLOW : ConsoleColor.PURPLE;
+                    System.out.printf(color + "   + Extra %-5s: %-18s +$%5.2f\n" + ConsoleColor.RESET,
+                            extra.isCheese() ? "Chs" : "Meat",
+                            extra.getName(),
+                            extra.calculatePrice()
+                    );
+                }
+            }
+        }
+
+        // 4. Free Veggies & Condiments (Leave this as you had it!)
+        if (!currentSandwich.getToppings().isEmpty()) {
+            for (Topping topping: currentSandwich.getToppings()) {
+                System.out.printf("   ◦ Veggie:       %-18s  $0.00\n", topping.name());
+            }
+        }
+        if (!currentSandwich.getSauces().isEmpty()) {
+            for (String sauce: currentSandwich.getSauces()) {
+                System.out.printf("   ◦ Sauce:        %-18s  $0.00\n", sauce);
+            }
+        }
+
+        System.out.println(ConsoleColor.CYAN + "   -------------------------------------" + ConsoleColor.RESET);
+
+        // 5. Dynamic Mathematical Total Updating in Real Time
+        System.out.printf(ConsoleColor.BOLD + ConsoleColor.GREEN + "   CURRENT RUNNING TOTAL:              $%5.2f\n" + ConsoleColor.RESET,
+                currentSandwich.calculatePrice()
+        );
+        System.out.println(ConsoleColor.BOLD + ConsoleColor.CYAN + "=========================================\n" + ConsoleColor.RESET);
+    }
+``` 
 ## 👤 Author
  
 **Ezra** — [@Estb1296](https://github.com/Estb1296)
