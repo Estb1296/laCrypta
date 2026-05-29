@@ -94,13 +94,13 @@ public class Sandwich extends MenuItem {
         }
 
         // Regular and premium toppings
-        for (Topping t : toppings) {
-            total += t.price();
+        for (Topping topping : toppings) {
+            total += topping.price();
         }
 
         // Extra toppings
-        for (ExtraTopping e : extraToppings) {
-            total += e.getPrice();
+        for (ExtraTopping extraTopping : extraToppings) {
+            total += extraTopping.getPrice();
         }
 
         return total;
@@ -110,7 +110,7 @@ public class Sandwich extends MenuItem {
      * Helper: Get meat premium based on current size.
      * Extracted to eliminate duplicate switch blocks.
      */
-    private double getMeatPremium() {
+    public double getMeatPremium() {
         if (this.size == null) return 0.0; // Guard clause against null pointer exception
         return switch (this.size) {
             case FOUR -> MEAT_PREMIUM_FOUR;
@@ -123,7 +123,7 @@ public class Sandwich extends MenuItem {
      * Helper: Get cheese premium based on current size.
      * Extracted to eliminate duplicate switch blocks.
      */
-    private double getCheesePremium() {
+    public double getCheesePremium() {
         if (this.size == null) return 0.0;
         return switch (this.size) {
             case FOUR -> CHEESE_PREMIUM_FOUR;
@@ -139,17 +139,14 @@ public class Sandwich extends MenuItem {
 
     public void setSize(SandwichSize size) {
         this.size = size;
-        // No price mutation here — calculatePrice() handles it
     }
 
     public void setMeat(String newMeat) {
         this.meat = newMeat;
-        // No price mutation here — calculatePrice() handles it
     }
 
     public void setCheese(String newCheese) {
         this.cheese = newCheese;
-        // No price mutation here — calculatePrice() handles it
     }
 
     public void setToasted(boolean toasted) {
@@ -181,7 +178,7 @@ public class Sandwich extends MenuItem {
         return Collections.unmodifiableList(toppings);
     }
 
-    public List<ExtraTopping> getExtraTopping() {
+    public List<ExtraTopping> getExtraToppings() {
         return Collections.unmodifiableList(extraToppings);
     }
 
@@ -207,16 +204,12 @@ public class Sandwich extends MenuItem {
      * If it's already on the signature template, it removes it.
      * If it's missing, it adds it.
      */
-    public void toggleTopping(Topping topping) {
-        // Looks through your toppings list to see if a topping with this name already exists
+    public boolean toggleTopping(Topping topping) {
         boolean removed = this.toppings.removeIf(t -> t.name().equalsIgnoreCase(topping.name()));
-
-        if (removed) {
-            System.out.println("❌ Removed: " + topping.name() + " from template.");
-        } else {
+        if (!removed) {
             this.toppings.add(topping);
-            System.out.println("➕ Added: " + topping.name() + " to template.");
         }
+        return removed; // true = was removed, false = was added
     }
 
     // Clear all sauces so the user can rewrite them from scratch

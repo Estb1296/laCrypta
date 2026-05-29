@@ -533,7 +533,7 @@ class SandwichTest {
         sandwich.addExtraTopping(extraTopping);
 
         // assert
-        assertEquals(1, sandwich.getExtraTopping().size());
+        assertEquals(1, sandwich.getExtraToppings().size());
         assertEquals(basePriceBeforeExtra + 1.50, sandwich.getPrice(), 0.01,
                 "Adding a 12\" extra meat portion should add exactly $1.50 to the price pool");
     }
@@ -550,7 +550,7 @@ class SandwichTest {
         sandwich.addExtraTopping(extra2);
 
         // assert
-        assertEquals(2, sandwich.getExtraTopping().size());
+        assertEquals(2, sandwich.getExtraToppings().size());
     }
 
     @Test
@@ -566,7 +566,7 @@ class SandwichTest {
         sandwich.removeExtraTopping(0);
 
         // assert
-        assertEquals(0, sandwich.getExtraTopping().size(), "The extra topping list should be empty.");
+        assertEquals(0, sandwich.getExtraToppings().size(), "The extra topping list should be empty.");
         assertEquals(basePrice, sandwich.getPrice(), 0.01, "Sandwich price should return to its base price.");
     }
     @Test
@@ -584,7 +584,7 @@ class SandwichTest {
         sandwich.removeExtraTopping(0);
 
         // assert
-        assertEquals(0, sandwich.getExtraTopping().size(), "The extra topping list should be empty.");
+        assertEquals(0, sandwich.getExtraToppings().size(), "The extra topping list should be empty.");
         assertEquals(priceWithExtra - toppingPrice, sandwich.getPrice(), 0.01, "Sandwich price did not revert correctly.");
     }
 
@@ -597,13 +597,13 @@ class SandwichTest {
 
         // act & assert
         assertDoesNotThrow(() -> sandwich.removeExtraTopping(10));
-        assertEquals(1, sandwich.getExtraTopping().size());
+        assertEquals(1, sandwich.getExtraToppings().size());
     }
 
     @Test
     void getExtraTopping_NoExtraToppingsAdded_ReturnsEmptyList() {
         // arrange & act
-        List<ExtraTopping> extraToppings = sandwich.getExtraTopping();
+        List<ExtraTopping> extraToppings = sandwich.getExtraToppings();
 
         // assert
         assertNotNull(extraToppings);
@@ -618,7 +618,7 @@ class SandwichTest {
         sandwich.addExtraTopping(extraTopping);
 
         // act
-        List<ExtraTopping> extraToppings = sandwich.getExtraTopping();
+        List<ExtraTopping> extraToppings = sandwich.getExtraToppings();
 
         // assert
         assertEquals(1, extraToppings.size());

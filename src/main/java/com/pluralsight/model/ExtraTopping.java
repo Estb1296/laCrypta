@@ -2,16 +2,16 @@ package com.pluralsight.model;
 
 public class ExtraTopping extends MenuItem {
     private final ExtraToppingSize size;
-    private final boolean isCheese;
+    private final boolean cheese;
 
-    public ExtraTopping(String name, boolean isCheese, ExtraToppingSize size) {
+    public ExtraTopping(String name, boolean cheese, ExtraToppingSize size) {
         super(name, "Extra Topping");
         this.size = size;
-        this.isCheese = isCheese;
+        this.cheese = cheese;
     }
 
     public boolean isCheese() {
-        return this.isCheese;
+        return cheese;
     }
 
     public enum ExtraToppingSize {
@@ -35,7 +35,7 @@ public class ExtraTopping extends MenuItem {
         if (size == null) return 0.0;
         // 🟢 STEP 3: Customize price based on type if you want to!
         // For example, making extra cheese cost 50% less than extra meat:
-        if (isCheese) {
+        if (cheese) {
             return size.getPrice() * 0.50;
         }
         return size.getPrice(); // Default flat rate for meats

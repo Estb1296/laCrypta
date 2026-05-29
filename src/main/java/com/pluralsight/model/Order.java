@@ -1,22 +1,23 @@
 package com.pluralsight.model;
 
+import com.pluralsight.ui.util.PromoConfiguration;
+
 import java.util.ArrayList;
 
 public class Order extends MenuItem implements Priceable {
     private final ArrayList<MenuItem> items;
 
-    private double total;
     private double couponDiscount = 0.0;
 
     public Order() {
         super("Order", "Customer Order");
         items = new ArrayList<>();
-        total = 0.0;
+
     }
 
     public void addItem(MenuItem item) {
         items.add(item);
-        total += item.getPrice();
+
     }
 
     public ArrayList<MenuItem> getItems() {
@@ -25,25 +26,23 @@ public class Order extends MenuItem implements Priceable {
 
     @Override
     public double getPrice() {
-        return total;
+        return calculatePrice();
     }
 
     public void removeItem(int index) {
         if (index >= 0 && index < items.size()) {
-            total -= items.get(index).getPrice();
             items.remove(index);
         }
     }
 
     public void clearCart() {
         items.clear();
-        total = 0.0;
         this.couponDiscount = 0.0;
     }
 
     // Hidden matching key
     public boolean isValidPromoCode(String userCode) {
-        return userCode.equals("Craig26@");
+        return userCode.equals(PromoConfiguration.PROMO_CODE);
     }
 
     public void setCouponDiscountAmount(double amount) {
@@ -56,17 +55,16 @@ public class Order extends MenuItem implements Priceable {
 
     @Override
     public double calculatePrice() {
-        double subtotal = 0.0;
-        for (MenuItem item : items) {
-            subtotal += item.getPrice();
-        }
+        double subtotal = items.stream()
+                .mapToDouble(MenuItem::getPrice)
+                .sum();
         double finalTotal = subtotal - couponDiscount;
         return Math.max(0.0, finalTotal); // Keeps total at or above $0.00
     }
 
     @Override
     public String toReceiptLine() {
-        return "Order Total: $" + String.format("%.2f", total);
+        return "Order Total: $" + String.format("%.2f", getPrice());
     }
 
     @Override

@@ -129,10 +129,10 @@ public class CheckOutScreen {
         items.stream()
                 .filter(item -> item.getCategory().equalsIgnoreCase(category))
                 .forEach(item -> {
-                    // 1. Print the item line-item dynamically (Bold name, plain price)
+                    //  Print the item line-item dynamically (Bold name, plain price)
                     System.out.println(" " + counter.getAndIncrement() + ") " + ConsoleColor.BOLD + item.getName() + ConsoleColor.RESET + " - $" + String.format("%.2f", item.calculatePrice()));
 
-                    // 2. Pattern Match for Sandwich to break down Steak & Cheese Costs!
+                    // Pattern Match for Sandwich to break down Steak & Cheese Costs!
                     if (item instanceof Sandwich sandwich) {
                         // 🥪 Base Sub Layout Price
                         if (sandwich.getSize() != null) {
@@ -163,8 +163,8 @@ public class CheckOutScreen {
                         }
 
                         // 🚀 Extra Premium Additions
-                        if (!sandwich.getExtraTopping().isEmpty()) {
-                            sandwich.getExtraTopping().forEach(extra -> {
+                        if (!sandwich.getExtraToppings().isEmpty()) {
+                            sandwich.getExtraToppings().forEach(extra -> {
                                 String color = extra.isCheese() ? ConsoleColor.YELLOW : ConsoleColor.PURPLE;
                                 System.out.printf(color + "       + Extra %s: %-15s +$%5.2f\n" + ConsoleColor.RESET,
                                         extra.isCheese() ? "Chs" : "Meat", extra.getName(), extra.calculatePrice());

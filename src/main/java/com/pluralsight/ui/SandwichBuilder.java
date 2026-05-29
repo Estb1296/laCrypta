@@ -299,7 +299,10 @@ public class SandwichBuilder {
             if (choice.equals("0")) break;
 
             Topping chosen = standardVeggies.get(Integer.parseInt(choice) - 1);
-            currentSandwich.toggleTopping(chosen);
+            boolean wasRemoved = currentSandwich.toggleTopping(chosen);
+            System.out.println(wasRemoved
+                    ? "❌ Removed: " + chosen.name()
+                    : "➕ Added: " + chosen.name());
         }
     }
 
@@ -369,28 +372,16 @@ public class SandwichBuilder {
 
         // 2. Core Meat & Cheese Values (Dynamically pulling from your model's formula rules)
         if (currentSandwich.getMeat() != null && !currentSandwich.getMeat().equalsIgnoreCase("None")) {
-            double meatPremium = 0.0;
-            switch (currentSandwich.getSize()) {
-                case FOUR -> meatPremium = 1.00;   // Matches MEAT_PREMIUM_FOUR
-                case EIGHT -> meatPremium = 2.00;  // Matches MEAT_PREMIUM_EIGHT
-                case TWELVE -> meatPremium = 3.00; // Matches MEAT_PREMIUM_TWELVE
-            }
-            System.out.printf("   ◦ Core Protein: %-18s +$%5.2f\n", currentSandwich.getMeat(), meatPremium);
+            System.out.printf("   ◦ Core Protein: %-18s +$%5.2f\n", currentSandwich.getMeat(), currentSandwich.getMeatPremium());
         }
 
         if (currentSandwich.getCheese() != null && !currentSandwich.getCheese().equalsIgnoreCase("None")) {
-            double cheesePremium = 0.0;
-            switch (currentSandwich.getSize()) {
-                case FOUR -> cheesePremium = 1.00;   // Matches CHEESE_PREMIUM_FOUR
-                case EIGHT -> cheesePremium = 2.00;  // Matches CHEESE_PREMIUM_EIGHT
-                case TWELVE -> cheesePremium = 3.00; // Matches CHEESE_PREMIUM_TWELVE
-            }
-            System.out.printf("   ◦ Core Cheese:  %-18s +$%5.2f\n", currentSandwich.getCheese(), cheesePremium);
+            System.out.printf("   ◦ Core Cheese:  %-18s +$%5.2f\n", currentSandwich.getCheese(), currentSandwich.getCheesePremium());
         }
 
         // 3. Dynamic Extra Premium Upgrades (Leave this loop exactly as you had it!)
-        if (!currentSandwich.getExtraTopping().isEmpty()) {
-            for (MenuItem item : currentSandwich.getExtraTopping()) {
+        if (!currentSandwich.getExtraToppings().isEmpty()) {
+            for (MenuItem item : currentSandwich.getExtraToppings()) {
                 if (item instanceof ExtraTopping extra) {
                     String color = extra.isCheese() ? ConsoleColor.YELLOW : ConsoleColor.PURPLE;
                     System.out.printf(color + "   + Extra %-5s: %-18s +$%5.2f\n" + ConsoleColor.RESET,

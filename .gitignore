@@ -37,3 +37,5 @@ build/
 
 ### Mac OS ###
 .DS_Store
+### Security Secrets ###
+credentials.properties
