@@ -205,11 +205,26 @@ public double calculatePrice() {
 ### 5. Receipts are timestamped automatically
  
 ```java
-// ReceiptWriter.java
-String filename = LocalDateTime.now()
-    .format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")) + ".txt";
-Path path = Paths.get("receipts", filename);
-Files.createDirectories(path.getParent());
+// Inside ReceiptWriter.java
+public void saveReceipt(Order order) {
+    // Generates a unique filename based on the exact second of checkout (e.g., 20260529-083241.txt)
+    String filename = LocalDateTime.now()
+            .format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")) + ".txt";
+
+    Path path = Paths.get("receipts", filename);
+
+    try {
+        // Enforces directory initialization; creates the 'receipts/' folder if missing
+        Files.createDirectories(path.getParent());
+
+        // Auto-closing writer stream that commits the order data to disk
+        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
+            writer.write(order.getReceiptDetails());
+        }
+    } catch (IOException e) {
+        System.out.println("⚠️ Technical failure: Unable to write receipt file to disk.");
+    }
+}
 ```
  
 ---
@@ -246,10 +261,12 @@ Tests are written in JUnit 5 and cover:
 - `Sandwich` — bread, size, meat, cheese, toppings, sauces, price calculation, constructors
 - `ExtraTopping` — meat vs cheese pricing, enum base rates, receipt line format
 ---
- 
+
 ## 🗂️ Class Diagram
- 
-> *(Add my exported diagram image here)*
+
+## La Crypta Sanwich Shop POS System
+
+![Class diagram (1).jpeg](Class%20diagram%20%281%29.jpeg)
  
 ---
  
