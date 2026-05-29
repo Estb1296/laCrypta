@@ -55,9 +55,11 @@ public class Sandwich extends MenuItem {
             this.price = price;
             this.extraSize=extraSize;
         }
+
         public ExtraTopping.ExtraToppingSize getExtraSize() {
             return extraSize;
         }
+
         public String getDisplay() {
             return display;
         }
